@@ -167,7 +167,7 @@ items:
       quantity:  4
 ```
 
-### Liquid Codes
+### Liquid Codes 
 
 If you want to display the **Liquid** snippet, surround the liquid code with `{% raw %}{%{% endraw %} raw {%raw%}%}{%endraw%}` and `{% raw %}{%{% endraw %} endraw {%raw%}%}{%endraw%}` .
 
