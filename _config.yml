@@ -18,23 +18,24 @@ url: 'https://bigb0sss.github.io'
 author: bigb0ss                  
 avatar: /assets/img/bigb0ss/bigb0ss.png
 
+linkedin:
+  username: danielsmin
+
 github:
   username: bigb0sss             
 
 twitter:
   username: bigb0ss___           
 
-linkedin:
-  username: danielsmin
-
 social:
   name: bigb0ss                  # it will shows as the copyright owner in Footer
   email: example@doamin.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
+    - https://www.linkedin.com/in/danielsmin
     - https://twitter.com/bigb0ss___      # change to your twitter homepage
     - https://github.com/bigb0sss       # change to your github homepage
-    - https://www.linkedin.com/in/danielsmin
+    
 
 google_site_verification: google_meta_tag_verification # change to your verification string
 
