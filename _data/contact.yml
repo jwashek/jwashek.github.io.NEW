@@ -1,9 +1,9 @@
 #  The contact options.
-#  v2.3
-#  https://github.com/cotes2020/jekyll-theme-chirpy
-#  © 2020 Cotes Chung
-#  MIT Licensed
 
+-
+  type: linkedin
+  icon: 'fab fa-linkedin'   # icons powered by <https://fontawesome.com/>
+  url:  'https://www.linkedin.com/in/danielsmin'   # Fill with your Linkedin homepage
 -
   type: github
   icon: 'fab fa-github-alt'
