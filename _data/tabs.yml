@@ -7,7 +7,7 @@
   name: Blogs
   icon: "fas fa-stream"
   path: tabs
-  url: blogs
+  url: categories
 -
   name: "Tags"
   icon: "fas fa-tags"
