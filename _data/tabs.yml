@@ -4,10 +4,10 @@
   name: Home
   icon: "fas fa-home"
 -
-  name: Categories
+  name: Blogs
   icon: "fas fa-stream"
   path: tabs
-  url: categories
+  url: blogs
 -
   name: "Tags"
   icon: "fas fa-tags"
