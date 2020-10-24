@@ -7,6 +7,8 @@ tags: [cobalt strike]
 ping: true
 ---
 
+![upload-image](/assets/img/post/redteam-cobalt-strike/cobalt_strike_logo.png)
+
 ## Intro
 
 We are now in the Cobalt Strike 4.0+ era. As Cobalt Strike is getting more popular choice for the Command and Control (“C2”) server nowadays, customizing your malleable C2 profile is imperative to disguise your beacon traffics as well as communication indicators. Additionally, it can also help dictate in-memory characteristics and beacon process injection behaviors.
@@ -18,42 +20,31 @@ The full profile creation guide can be found here [CS4.0_guideline.profile](http
 ```yaml
 set sample_name "bigb0ss.profile"; # Profile name (used in the Indicators of Compromise report)
 
-set sleeptime "30000";                  
-  # Sleep time for the beacon callback (in milliseconds)
+set sleeptime "30000"; # Sleep time for the beacon callback (in milliseconds)
   
-set jitter "50";                        
-  # Jitter to set %. In this example, the beacon will callback between 15 and 30 sec jitter
+set jitter "50"; # Jitter to set %. In this example, the beacon will callback between 15 and 30 sec jitter
   
-set host_stage "[true|false]";            
-  # Staged payload allow or disallow (Note: Stager payloads are generally easier to get caught, but it's necessary for the space-restricted situations)
+set host_stage "[true|false]"; # Staged payload allow or disallow (Note: Stager payloads are generally easier to get caught, but it's necessary for the space-restricted situations)
   
-set useragent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.177";    
-  # User-Agent Setup
+set useragent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.177"; # User-Agent Setup
 ```
 
 ## DNS Beacon Block
 
-```
-set dns_idel "8.8.8.8";                 
-  # IP to indicate no tasks available. Avoid using bogon address "0.0.0.0" (This can be picked up as IOC)
+```yaml
+set dns_idel "8.8.8.8"; # IP to indicate no tasks available. Avoid using bogon address "0.0.0.0" (This can be picked up as IOC)
   
-set maxdns "[0-255]";                     
-  # Maximum length of hostname when uploading data over DNS (0-255)
+set maxdns "[0-255]"; # Maximum length of hostname when uploading data over DNS (0-255)
   
-set dns_sleep "1000";                   
-  # Force a sleep prior to each individual DNS request. (in milliseconds)
+set dns_sleep "1000"; # Force a sleep prior to each individual DNS request. (in milliseconds)
   
-set dns_stager_prepend "";                
-  # Prepend text to payload stage delivered to DNS TXT record stager
+set dns_stager_prepend ""; # Prepend text to payload stage delivered to DNS TXT record stager
   
-set dns_stager_subhost ".stage.8546.";  
-  # Subdomain used by DNS TXT record stager
+set dns_stager_subhost ".stage.8546."; # Subdomain used by DNS TXT record stager
   
-set dns_max_txt "[0-255]";                
-  # Maximum length of DNS TXT responses for tasks
+set dns_max_txt "[0-255]"; # Maximum length of DNS TXT responses for tasks
   
-set dns_ttl "1";                        
-  # TTL for DNS replies
+set dns_ttl "1"; # TTL for DNS replies
 ```
 
 ## SMB Beacon Block
