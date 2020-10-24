@@ -8,8 +8,6 @@ tags: [hackthebox, ]
 
 ![image](/assets/img/post/htb/blunder/01_infocard.png)
 
-<TBD>
-
 # Recon
 
 ## Nmap
