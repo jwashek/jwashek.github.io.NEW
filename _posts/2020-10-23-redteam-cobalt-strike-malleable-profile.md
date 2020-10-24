@@ -4,6 +4,7 @@ author: bgib0ss
 date: 2020-10-23 23:25:00 +0800
 categories: [RedTeam, Cobalt_Strike]
 tags: [cobalt strike]
+ping: true
 ---
 
 ## Intro
@@ -14,7 +15,7 @@ The full profile creation guide can be found here [CS4.0_guideline.profile](http
 
 ## Global Option Block
 
-```
+```yaml
 set sample_name "bigb0ss.profile";     
   # Profile name (used in the Indicators of Compromise report)
 
