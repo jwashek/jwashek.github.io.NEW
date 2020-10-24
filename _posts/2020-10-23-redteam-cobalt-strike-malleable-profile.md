@@ -309,11 +309,11 @@ process-inject {
 
 ```yaml
 post-ex {
-	      set spawnto_x86 "%windir%\\syswow64\\<mfpmp>.exe";              
-	      set spawnto_x64 "%windir%\\sysnative\\<mfpmp>.exe";             
-	      set obfuscate "[true|false]"; # Obfuscate the permissions and content of our post-ex DLLs
+        set spawnto_x86 "%windir%\\syswow64\\<mfpmp>.exe";              
+        set spawnto_x64 "%windir%\\sysnative\\<mfpmp>.exe";             
+        set obfuscate "[true|false]"; # Obfuscate the permissions and content of our post-ex DLLs
           
         set smartinject "[true|false]"; # Directs Beacon to embed key function pointers (ex) GetProcAddress, LoadLibrary) into its same-arch post-ex DLLs 
                                                                     
-	      set amsi_disable "[true|false]"; } # Disable AMSI (Antimalware Scan Interface) in powerpick, execute-assembly and psinject before loading .NET or PS code
+        set amsi_disable "[true|false]"; } # Disable AMSI (Antimalware Scan Interface) in powerpick, execute-assembly and psinject before loading .NET or PS code
 ```
