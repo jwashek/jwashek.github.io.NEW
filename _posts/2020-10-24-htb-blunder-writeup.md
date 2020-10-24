@@ -34,10 +34,45 @@ Nmap done: 1 IP address (1 host up) scanned in 117.15 seconds
 
 ### Interesting Ports
 
-* HTTP (80/TCP) - Blunder web page. 
+* HTTP (80/TCP) - Blunder Web Page. 
 
 ![image](/assets/img/post/htb/blunder/02_http.png)
 
 
 ### Dirsearch
+
+Used [dirsearch](https://github.com/maurosoria/dirsearch) to further enumerate the website.
+
+```console
+# python3 dirsearch.py -u http://10.10.10.191/ -e txt,php,asp,js | grep 200
+
+[15:41:45] 200 -  563B  - /.gitignore                               
+[15:41:55] 200 -    3KB - /about                               
+[15:42:00] 200 -    2KB - /admin/
+[15:42:51] 200 -   30B  - /install.php
+[15:42:54] 200 -    1KB - /LICENSE  
+[15:43:13] 200 -    3KB - /README.md
+[15:43:14] 200 -   22B  - /robots.txt  
+```
+
+When I visited to `/admin`, I was promoted to the following BLUDIT login page:
+
+![image](/assets/img/post/htb/blunder/03_bludit.png)
+
+Additionally, `/.gitignore` had a list of BLUDIT script contents. By searching, I was able to identify the version of the BLUDIT CMS in `http://10.10.10.191/bl-plugins/version/metadata.json`
+
+![image](/assets/img/post/htb/blunder/04_version.png)
+
+
+## Initial Foothold
+
+### Password Bruteforcing
+
+By Google searching, I found a potential [BLUDIT CMS 3.9.2 exploit](https://www.exploit-db.com/exploits/48701). But it required valid login credentials to the `/admin` page. 
+
+
+
+
+
+
 
