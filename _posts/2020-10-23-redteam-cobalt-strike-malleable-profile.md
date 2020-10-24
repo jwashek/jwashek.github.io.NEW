@@ -61,7 +61,7 @@ set pipename_stager "win_svc+8546"; # Name of pipe to use for SMB beacon's named
 set tcp_port "1337"; # TCP beacon listen port
 ```
 
-### SSL/Code Certificate Block
+## SSL/Code Certificate Block
 
 ```yaml
 ### Self-Signed Certificate HTTPS Beacon Block 
@@ -89,7 +89,7 @@ code-signer {
     set alias "server"; }
 ```
 
-### HTTP/S Block
+## HTTP/S Block
 
 ```yaml
 ### HTTP/S Global Response Header Block
@@ -220,7 +220,7 @@ http-stager {
             print; } } } # Server block MUST be terminated with "print"
 ```
 
-### Malleable PE & In-Memory Evasion and Obfuscation Block
+## Malleable PE & In-Memory Evasion and Obfuscation Block
 
 ```yaml
 stage {
@@ -271,7 +271,7 @@ stage {
     stringw "<whatever string>"; } # Adds a wide (UTF-16LE encoded) string (ex) 0062 0069 0067 0062 0030 0073 0073)
 ```
 
-### Process Injection Block
+## Process Injection Block
 
 ```yaml
 process-inject {
@@ -305,7 +305,7 @@ process-inject {
         SetThreadContext; } } # Suspended process only
 ```
 
-### Post-Exploitation Block
+## Post-Exploitation Block
 
 ```yaml
 post-ex {
