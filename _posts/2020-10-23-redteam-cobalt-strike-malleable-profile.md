@@ -1,5 +1,5 @@
 ---
-title: [RED_TEAM] Cobalt Strike 4.0+ Malleable C2 Profile Guideline
+title: Cobalt Strike 4.0+ Malleable C2 Profile Guideline
 author: bgib0ss
 date: 2020-10-23 23:25:00 +0800
 categories: [RedTeam, Cobalt_Strike]
@@ -8,9 +8,9 @@ tags: [cobalt strike]
 
 ## Intro
 
-We are now in Cobalt Strike 4.0+ era. As we are using Cobalt Strike as command and control (“C2”) server more and more, customizing your malleable C2 profile is becoming imperative to disguise your beacon traffics and communication indicators. Additionally it can also control in-memory characteristics and beacon process injection behaviors.
+We are now in the Cobalt Strike 4.0+ era. As Cobalt Strike is getting more popular choice for the Command and Control (“C2”) server nowadays, customizing your malleable C2 profile is imperative to disguise your beacon traffics as well as communication indicators. Additionally, it can also help dictate in-memory characteristics and beacon process injection behaviors.
 
-Full guideline profile can be found here [CS4.0_guideline.profile](https://github.com/bigb0sss/RedTeam/blob/master/CobaltStrike/malleable_C2_profile/CS4.0_guideline.profile). It contains more details/instructions to craft the Malleable C2 profiles.
+The full profile creation guide can be found here [CS4.0_guideline.profile](https://github.com/bigb0sss/RedTeam/blob/master/CobaltStrike/malleable_C2_profile/CS4.0_guideline.profile). It contains more details/instructions to craft the Malleable C2 profiles.
 
 ## Global Option Block
 
