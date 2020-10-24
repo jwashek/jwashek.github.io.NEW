@@ -15,9 +15,8 @@ The full profile creation guide can be found here [CS4.0_guideline.profile](http
 
 ## Global Option Block
 
-```
-set sample_name "bigb0ss.profile";     
-  # Profile name (used in the Indicators of Compromise report)
+```yaml
+set sample_name "bigb0ss.profile"; # Profile name (used in the Indicators of Compromise report)
 
 set sleeptime "30000";                  
   # Sleep time for the beacon callback (in milliseconds)
