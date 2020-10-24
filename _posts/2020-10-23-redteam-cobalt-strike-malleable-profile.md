@@ -15,7 +15,7 @@ The full profile creation guide can be found here [CS4.0_guideline.profile](http
 
 ## Global Option Block
 
-```yaml
+```
 set sample_name "bigb0ss.profile";     
   # Profile name (used in the Indicators of Compromise report)
 
@@ -34,7 +34,7 @@ set useragent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHT
 
 ## DNS Beacon Block
 
-```yaml
+```
 set dns_idel "8.8.8.8";                 
   # IP to indicate no tasks available. Avoid using bogon address "0.0.0.0" (This can be picked up as IOC)
   
@@ -107,7 +107,7 @@ code-signer {
 
 ### HTTP/S Block
 
-```yaml
+```
 ### HTTP/S Global Response Header Block
 http-config {
     set headers "Server, Content-Type, Cache-Control, Connection, X-Powered-By";        
@@ -265,7 +265,7 @@ http-stager {
 
 ### Malleable PE & In-Memory Evasion and Obfuscation Block
 
-```yaml
+```
 stage {
     set checksum "0";                             
       # The CheckSum value in Beacon's PE header    
@@ -350,7 +350,7 @@ stage {
 
 ### Process Injection Block
 
-```yaml
+```
 process-inject {
     set allocator "[VirtualAllocEx|NtMapViewOfSection]";    
       # The preferred method to allocate memory in the remote 
@@ -400,7 +400,7 @@ process-inject {
 
 ### Post-Exploitation Block
 
-```yaml
+```
 post-ex {
 	      set spawnto_x86 "%windir%\\syswow64\\<mfpmp>.exe";              
 	      set spawnto_x64 "%windir%\\sysnative\\<mfpmp>.exe";             
