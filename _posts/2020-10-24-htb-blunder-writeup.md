@@ -63,6 +63,44 @@ Additionally, `/.gitignore` had a list of BLUDIT script contents. By searching, 
 
 ![image](/assets/img/post/htb/blunder/04_version.png)
 
+### FFUF
+
+I also ran another web discovery tool [FFUF](https://github.com/ffuf/ffuf) just in case I missed anything. I found another `.txt` file called `todo.txt` which contained the potential useranme `fergus`.
+
+```console
+# ./ffuf -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt -e .txt -u http://10.10.10.191/FUZZ -fc 403
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v0.12
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://10.10.10.191/FUZZ
+ :: Extensions       : .txt 
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200,204,301,302,307,401,403
+ :: Filter           : Response status: 403
+________________________________________________
+
+LICENSE                 [Status: 200, Size: 1083, Words: 155, Lines: 22]
+about                   [Status: 200, Size: 3280, Words: 225, Lines: 106]
+admin                   [Status: 301, Size: 0, Words: 1, Lines: 1]
+cgi-bin/                [Status: 301, Size: 0, Words: 1, Lines: 1]
+robots.txt              [Status: 200, Size: 22, Words: 3, Lines: 2]
+robots.txt              [Status: 200, Size: 22, Words: 3, Lines: 2]
+todo.txt                [Status: 200, Size: 118, Words: 20, Lines: 5]
+```
+
+![image](/assets/img/post/htb/blunder/05_user.png)
 
 ## Initial Foothold
 
