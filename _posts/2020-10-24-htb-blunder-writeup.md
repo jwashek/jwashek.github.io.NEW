@@ -10,7 +10,7 @@ tags: [hackthebox, ]
 
 ## Recon
 
-### Nmap
+## Nmap
 
 Let’s begin with an initial port scan:
 
