@@ -2,13 +2,11 @@
 title: HTB - Blunder Write-up
 author: bigb0ss
 date: 2020-10-24 23:25:00 +0800
-categories: [hackthebox, box, easy]
+categories: [Hack The Box, Box, Easy]
 tags: [hackthebox, ]
 ---
 
 ![image](/assets/img/post/htb/blunder/01_infocard.png)
-
-# Recon
 
 ## Nmap
 
