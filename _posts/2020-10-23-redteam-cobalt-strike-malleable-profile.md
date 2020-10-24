@@ -61,10 +61,10 @@ set dns_ttl "1";
 
 ```yaml
 set pipename "win_svc+8546";            
-  ## Name of pipe to use for SMB beacon's peer-to-peer communication
+  ### Name of pipe to use for SMB beacon's peer-to-peer communication
   
 set pipename_stager "win_svc+8546";     
-  ## Name of pipe to use for SMB beacon's named pipe stager
+  ### Name of pipe to use for SMB beacon's named pipe stager
 ```
 
 ## TCP Beacon Block
