@@ -3,7 +3,7 @@ title: Cobalt Strike 4.0+ Malleable C2 Profile Guideline
 author: bgib0ss
 date: 2020-10-23 23:25:00 +0800
 categories: [RedTeam, Cobalt_Strike]
-tags: [cobalt strike]
+tags: [cobalt strike, malleable c2]
 ping: true
 ---
 
