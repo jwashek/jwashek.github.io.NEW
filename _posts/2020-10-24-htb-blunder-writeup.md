@@ -70,7 +70,7 @@ Additionally, `/.gitignore` had a list of BLUDIT script contents. By searching, 
 
 ### FFUF
 
-I also ran another web discovery tool [FFUF](https://github.com/ffuf/ffuf) just in case I missed anything. I found another `.txt` file called `todo.txt` which contained the potential useranme `fergus`.
+I also ran another web discovery tool [FFUF](https://github.com/ffuf/ffuf) just in case I missed anything. I found another `.txt` file called `todo.txt` which contained the potential username `fergus`.
 
 ```console
 $ ./ffuf -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt -e .txt -u http://10.10.10.191/FUZZ -fc 403
