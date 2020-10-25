@@ -220,3 +220,37 @@ Uploading payload: .htaccess
 ![image](/assets/img/post/htb/blunder/07-rev-shell.png)
 
 
+## Privilege Escalation
+
+### www-data --> hugo (user.txt)
+
+From the enumeration, another BLUDIT CMS `bludit-3.10.0a` build was found. Within, I found a PHP script called `users.php` which contained SHA-1 hashed password for the `hugo` user.
+
+![image](/assets/img/post/htb/blunder/08-hugo-hash.png)
+
+```console
+# hash-identifier
+   #########################################################################
+   #     __  __                     __           ______    _____           #
+   #    /\ \/\ \                   /\ \         /\__  _\  /\  _ `\         #
+   #    \ \ \_\ \     __      ____ \ \ \___     \/_/\ \/  \ \ \/\ \        #
+   #     \ \  _  \  /'__`\   / ,__\ \ \  _ `\      \ \ \   \ \ \ \ \       #
+   #      \ \ \ \ \/\ \_\ \_/\__, `\ \ \ \ \ \      \_\ \__ \ \ \_\ \      #
+   #       \ \_\ \_\ \___ \_\/\____/  \ \_\ \_\     /\_____\ \ \____/      #
+   #        \/_/\/_/\/__/\/_/\/___/    \/_/\/_/     \/_____/  \/___/  v1.2 #
+   #                                                             By Zion3R #
+   #                                                    www.Blackploit.com #
+   #                                                   Root@Blackploit.com #
+   #########################################################################
+--------------------------------------------------
+ HASH: faca404fd5c0a31cf1897b823c695c85cffeb98d
+
+Possible Hashs:
+[+] SHA-1
+[+] MySQL5 - SHA-1(SHA-1($pass))
+```
+
+And using an online SHA-1 decryptor, the cleartext password for the `hugo` user was obtained. (Password: Password120)
+
+![image](/assets/img/post/htb/blunder/09-hugo-pass.png)
+
