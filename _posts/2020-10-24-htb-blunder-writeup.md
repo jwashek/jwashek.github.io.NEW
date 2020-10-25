@@ -10,7 +10,7 @@ tags: [hackthebox, blunder, Bludit CMS 3.9.2, Bruteforce Bypass, Sudo Bypass]
 
 This box was pretty simple and easy one to fully compromise. Good learning path to:
 * BLUDIT CMS 3.9.2 Brute-force Mitigation Bypass
-* BLUDIT CMS 3.9.2 Directory Traversal Exaploit
+* BLUDIT CMS 3.9.2 Directory Traversal Exploit
 * CVE-2019-14287 - Sudo Restriction Bypass 
 
 ## Recon
