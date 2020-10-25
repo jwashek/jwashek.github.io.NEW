@@ -73,8 +73,80 @@ $(function(){
 
 Once logged in, there was the following static page:
 
-![image](/assets/img/post/htb/cache/04-after-login.png)
+![image](/assets/img/post/htb/cache/04_after-login.png)
 
+It was a bit of rabbit-hole. 
+
+### VHOST
+
+I also performed some directory brute-forceing against the `http://10.10.10.188/`; however, nothing seemed to be interesting. 
+
+Then, I moved onto performing some of the potential subdomain enumerations, which didn't get me to far either. 
+
+Next, I wanted to check for any potential VHOST (Virtural Hosting) for the domain. 
+
+Modifed my `/etc/hosts` file to add `cache.htb` to `10.10.10.188`:
+
+```bash
+127.0.0.1       localhost
+127.0.1.1       kali
+
+### htb
+10.10.10.188    cache.htb
+
+### The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+
+Once it was done, using `FFUF`, I started to look for any potential VHOST associated with the Cache system. 
+
+```console
+# ./ffuf -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-110000.txt -H "Host: FUZZ.htb" -u http://cache.htb -fw 902
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v0.12
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://cache.htb
+ :: Header           : Host: FUZZ.htb
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200,204,301,302,307,401,403
+ :: Filter           : Response words: 902
+________________________________________________
+
+hms                     [Status: 302, Size: 0, Words: 1, Lines: 1]
+```
+
+This found the permanent redirection (302) for `hms.htb`. I updated my `/etc/hosts` again to add `hms.htb` to `10.10.10.188`:
+
+```bash
+127.0.0.1       localhost
+127.0.1.1       kali
+
+### htb
+10.10.10.188    cache.htb hms.htb
+
+### The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+
+Then, I was able to access OpenEmr login page via `http:/hms.htb`.
+
+![image](/assets/img/post/htb/cache/05_openemr.png)
 
 
 ## Initial Foothold
