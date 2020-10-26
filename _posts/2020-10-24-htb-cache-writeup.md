@@ -3,7 +3,7 @@ title: HTB - Cache Write-up
 author: bigb0ss
 date: 2020-10-25 23:25:00 +0800
 categories: [Hack The Box, Linux, Medium]
-tags: [hackthebox, cache, ]
+tags: [hackthebox, cache, vhost, openemr]
 ---
 
 ![image](/assets/img/post/htb/cache/01_infocard.png)
@@ -144,12 +144,37 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ```
 
-Then, I was able to access OpenEmr login page via `http:/hms.htb`.
+Then, I was able to access OpenEMR login page via `http:/hms.htb`.
 
 ![image](/assets/img/post/htb/cache/05_openemr.png)
 
 
 ## Initial Foothold
+
+By Google searching about OpenEMR, I was able to discover some good amount of known vulnerabilities associated with this product. 
+
+* Vulnerability Disclosure Report - https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf
+
+* OpenEMR Simulated Attack - https://www.youtube.com/watch?v=DJSQ8Pk_7hc
+
+In a nutshell, the product was written in PHP and heavily vulnerable to multiple SQLi attacks because the codes were not sanitizing the user input properly, and most of the SQL syntax were not written in parameterized queries.
+
+Additionally, the Vulnerability Disclosure Report also indicated that by browsing `/admin.php`, one can view the information about the installed OpenEMR product, such as the version info. 
+
+![image](/assets/img/post/htb/cache/06_version.png)
+
+### SQLi (OpenEMR)
+
+According the the "OpenEMR Simulated Attack" video, we could bypass the authentication by visiting the `/portal` page and access pages like `add_edit_event_user.php` in order to identify the SQLi vuln. 
+
+![image](/assets/img/post/htb/cache/07_portal.png)
+
+![image](/assets/img/post/htb/cache/08_add-edit.png)
+
+By adding `?eid='` at the end of the above page, we can cause the SQL error. 
+
+![image](/assets/img/post/htb/cache/09_sql-error.png)
+
 
 
 
