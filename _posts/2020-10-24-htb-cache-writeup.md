@@ -277,6 +277,7 @@ Further enumeration identified that the Memcached service was running on the `lo
 
 > **NOTE**: Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read.
 
+The service allowed access without authentication using `Telnet`. Detailed blog post to exploit the Memcached server can be found [here](https://www.hackingarticles.in/penetration-testing-on-memcached-server/).
 
 Using the `stats slabs` command, we can see the list of the Memcached information.
 
