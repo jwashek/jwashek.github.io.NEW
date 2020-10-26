@@ -354,4 +354,4 @@ cat /root/root.txt
 f278317a8593bd7363e8de5b8b29d6a0
 ```
 
-Thanks for reading! :)
+Thanks for reading! :]

