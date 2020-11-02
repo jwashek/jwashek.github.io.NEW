@@ -1,10 +1,5 @@
 ---
 layout: page
-# The Home page layout
-# v2.0
-# https://github.com/cotes2020/jekyll-theme-chirpy
-# © 2017-2019 Cotes Chung
-# MIT Licensed
 ---
 
 
@@ -67,19 +62,6 @@ layout: page
       <!-- posted date -->
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=true %}
-
-      <!-- tags -->
-      {% if page.tags.size > 0 %}
-      <div class="post-tags">
-        <i class="fa fa-tags fa-fw mr-1"></i>
-        {% for tag in page.tags %}
-        <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
-          class="post-tag no-text-decoration" >
-          {{- tag -}}
-        </a>
-        {% endfor %}
-        </div>
-      {% endif %}
 
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
