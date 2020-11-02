@@ -54,7 +54,7 @@ layout: page
     <div class="post-content">
       <p>
         {% include no-linenos.html content=post.content %}
-        {{ content | markdownify | strip_html | truncate: 200 }}
+        {{ content | markdownify | strip_html | truncate: 300 }}
       </p>
     </div>
 
@@ -72,6 +72,8 @@ layout: page
       {% endif %}
     </div>
 
+  </div> <!-- .post-review -->
+
     <!-- tags -->
     {% if page.tags.size > 0 %}
     <div class="post-tags">
@@ -84,8 +86,6 @@ layout: page
       {% endfor %}
       </div>
     {% endif %}
-
-  </div> <!-- .post-review -->
 
 {% endfor %}
 
