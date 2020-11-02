@@ -54,7 +54,7 @@ layout: page
     <div class="post-content">
       <p>
         {% include no-linenos.html content=post.content %}
-        {{ content | markdownify | strip_html | truncate: 300 }}
+        {{ content | markdownify | strip_html | truncate: 200 }}
       </p>
     </div>
 
@@ -73,19 +73,6 @@ layout: page
     </div>
 
   </div> <!-- .post-review -->
-
-    <!-- tags -->
-    {% if page.tags.size > 0 %}
-    <div class="post-tags">
-      <i class="fa fa-tags fa-fw mr-1"></i>
-      {% for tag in page.tags %}
-      <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
-        class="post-tag no-text-decoration" >
-        {{- tag -}}
-      </a>
-      {% endfor %}
-      </div>
-    {% endif %}
 
 {% endfor %}
 

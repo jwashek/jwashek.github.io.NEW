@@ -8,7 +8,7 @@ tags: [hackthebox, blunder, Bludit CMS 3.9.2, Bruteforce Bypass, Sudo Bypass]
 
 ![image](/assets/img/post/htb/blunder/01_infocard.png)
 
-[Bludit CMS 3.9.2, Bruteforce Bypass, Sudo Bypass]
+[Bludit CMS 3.9.2] [Bruteforce Bypass] [Sudo Bypass]
 
 This box was pretty simple and easy one to fully compromise. Good learning path to:
 * BLUDIT CMS 3.9.2 Brute-force Mitigation Bypass
