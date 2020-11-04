@@ -8,7 +8,7 @@ tags: [hackthebox, cache, vhost, openemr, SQLi, memcached, docker, docker-prives
 
 ![image](/assets/img/post/htb/cache/01_infocard.png)
 
-[ vhost | openemr | SQLi | memcached | docker | docker-privesc ]
+[ vhost ] [ openemr ] [ SQLi ] [ memcached ] [ docker ] [ docker-privesc ]
 
 This was a medium-difficulty box and good learning path to:
 * Client-side Auth Source Code Review
