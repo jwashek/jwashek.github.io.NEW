@@ -146,21 +146,47 @@ $ vi /etc/hosts
 dead:beef:0000:0000:0250:56ff:feb9:681b mischief.htb
 ```
 
-Once we browser the page, we will be prompted with another login page.
+Once we browse the page, we will be prompted with another login page.
 
 ![image](/assets/img/post/htb/mischief/03_login.png)
 
-
-
-
-
-
-
+![image](/assets/img/post/htb/mischief/04_login.png)
 
 
 ## Initial Foothold
 
-### Password Bruteforcing
+### Password Shuffling
+
+Currently, we have the following two (2) credentials:
+
+```console
+loki : godofmischiefisloki
+loki : trickeryanddeceit
+```
+
+However, both of the credentials did not work on that newly found login page. But doing some common username with those passwords combo, we can find the user `administrator` is using the password `trickeryanddeceit` for that login page. And we are now redirected to the Command Execution Panel.
+
+![image](/assets/img/post/htb/mischief/05_rce.png)
+
+### RCE (Sensitive Data Access)
+
+The page also gives some hint: `In my home directory, i have my password in a file called credentials, Mr Admin`. But it restricts which commands can be used. Using the following command, we can successfully obtain the new password (`lokiisthebestnorsegod`) for the `loki` user:
+
+```console
+ping -c 2 127.0.0.1; cat /home/loki/c*;
+```
+
+![image](/assets/img/post/htb/mischief/06_pass.png)
+
+### SSH (loki)
+
+<b>user.txt</b>
+
+With this credenitals (`loki : lokiisthebestnorsegod`), we can now `ssh` into the host. And we can also read the `user.txt` flag.
+
+![image](/assets/img/post/htb/mischief/07_ssh.png)
+
+
 
 
 ## Privilege Escalation
