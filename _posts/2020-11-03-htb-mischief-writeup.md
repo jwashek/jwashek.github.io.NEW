@@ -309,6 +309,20 @@ ACCEPT     tcp  --  anywhere             anywhere             tcp spt:3366
 DROP       tcp  --  anywhere             anywhere   
 ```
 
+However, the IPv6 iptables is wide open for both ingress and egress. That was why we were able to do a reverse shell using it.
+
+```console
+# ip6tables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination  
+```
+
 ### SSH Root User
 
 I also checked the `/etc/ssh/sshd.config` file and confirmed that the `root` user was not allowed to `SSH` with password.
@@ -322,6 +336,7 @@ I also checked the `/etc/ssh/sshd.config` file and confirmed that the `root` use
 #MaxAuthTries 6
 #MaxSessions 10
 ```
+
 
 
 Thanks for reading! :]
