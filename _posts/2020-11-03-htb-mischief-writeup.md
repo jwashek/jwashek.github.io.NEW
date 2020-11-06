@@ -199,7 +199,7 @@ Another password can be found in `loki`'s `.bash_history` file.
 
 ![image](/assets/img/post/htb/mischief/08_bashHistory.png)
 
-I wanted to try that newly obtained password (`lokipasswordmischieftrickery`) for the `root` user, but `/bin/su` command was restricted for the `loki` user.
+I wanted to try that newly obtained password (`lokipasswordmischieftrickery`) for the `root` user, but `/bin/su` command was restricted for the `loki` user, and `SSH` as the `root` user with password was also restricted.
 
 ```console
 loki@Mischief:~$ su
@@ -278,5 +278,50 @@ The flag is not here, get a shell to find it!
 # cat /usr/lib/gcc/x86_64-linux-gnu/7/root.txt
 ae15<REDACTED>7807
 ```
+
+## Post-Ex 
+
+### Iptables
+
+So I wanted to check why the IPv4 outbound was not allowed. It turned out to be only SNMP (UDP) and SSH, 3366 (TCP) are allowed for ingress and egress. 
+
+```console
+# iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     udp  --  anywhere             anywhere             udp spt:snmp
+ACCEPT     udp  --  anywhere             anywhere             udp dpt:snmp
+DROP       udp  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:3366
+DROP       tcp  --  anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     udp  --  anywhere             anywhere             udp dpt:snmp
+ACCEPT     udp  --  anywhere             anywhere             udp spt:snmp
+DROP       udp  --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp spt:ssh
+ACCEPT     tcp  --  anywhere             anywhere             tcp spt:3366
+DROP       tcp  --  anywhere             anywhere   
+```
+
+### SSH Root User
+
+I also checked the `/etc/ssh/sshd.config` file and confirmed that the `root` user was not allowed to `SSH` with password.
+
+```console
+# Authentication:
+
+#LoginGraceTime 2m
+#PermitRootLogin prohibit-password    <-- Commendted
+#StrictModes yes
+#MaxAuthTries 6
+#MaxSessions 10
+```
+
 
 Thanks for reading! :]
