@@ -61,12 +61,12 @@ layout: page
     <div class="post-meta text-muted">
       <!-- posted date -->
       <i class="far fa-clock fa-fw"></i>
-      {% include timeago.html date=post.date tooltip=false %}
+      {% include timeago.html date=post.date tooltip=true %}
 
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
       <span id="pv_{{-tag-}}" class="tag">
-        <i class="fas fa-spinner fa-spin fa-fw"></i>
+        
       </span>
       
       <!-- page views -->
