@@ -65,10 +65,18 @@ layout: page
 
       <!-- tag -->
       {% capture result_elem %}
-        <i class="fa fa-tags fa-fw mr-1"></i>{tag}
+        <dev><i class="fa fa-tags fa-fw mr-1"></i>{tag}</dev>>
       {% endcapture %}
       
-     
+      <script>
+        SimpleJekyllSearch({
+          searchInput: document.getElementById('search-input'),
+          resultsContainer: document.getElementById('search-results'),
+          json: '{{ site.baseurl }}/assets/js/data/search.json',
+          searchResultTemplate: '{{ result_elem | strip_newlines }}',
+          noResultsText: '{{ not_found }}'
+        });
+      </script>
       
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
