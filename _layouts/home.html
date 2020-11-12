@@ -64,7 +64,7 @@ layout: page
       {% include timeago.html date=post.date tooltip=true %}
 
        <!-- tags -->
-      {% if page.tags.size > 0 %}
+     
       <div class="post-tags">
         <i class="fa fa-tags fa-fw mr-1"></i>
         {% for tag in page.tags %}
@@ -74,7 +74,7 @@ layout: page
         </a>
         {% endfor %}
         </div>
-      {% endif %}
+  
 
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
