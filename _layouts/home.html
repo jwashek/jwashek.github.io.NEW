@@ -63,14 +63,11 @@ layout: page
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=false %}
 
+      <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
-      {% include no-linenos.html content=post.content %} 
-      {% for tag in page.tags %}
-       <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
-          class="post-tag no-text-decoration" >
-         {{- tag -}}
-       </a>
-       {% endfor %}
+      <span id="pv_{{-tag-}}" class="tag">
+        <i class="fas fa-spinner fa-spin fa-fw"></i>
+      </span>
       
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
