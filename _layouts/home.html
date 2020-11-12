@@ -63,8 +63,8 @@ layout: page
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=true %}
 
-      <i class="fa fa-tag fa-fw"></i>
-      {tags}
+      <div><i class="fa fa-tag fa-fw"></i>
+      {tags}</div>
 
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
