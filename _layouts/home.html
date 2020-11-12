@@ -63,16 +63,14 @@ layout: page
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=true %}
 
-      <div class="post-tags">
-        <i class="fa fa-tags fa-fw mr-1"></i>
-        {% for tag in page.tags %}
-        <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
+      <i class="fa fa-tags fa-fw mr-1"></i>
+       {% for tag in page.tags %}
+       <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
           class="post-tag no-text-decoration" >
-          {{- tag -}}
-        </a>
-        {% endfor %}
-        </div>
-
+         {{- tag -}}
+       </a>
+       {% endfor %}
+      
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
       <i class="far fa-eye fa-fw"></i>
