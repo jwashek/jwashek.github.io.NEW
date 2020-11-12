@@ -67,7 +67,7 @@ layout: page
       <i class="fa fa-tags fa-fw mr-1"></i>
 
       {% for tag in page.tags %}
-        <a href="/tags/{{ tag }}/"
+        <a href="{{ post.url | relative_url }}/tags/{{ tag }}/"
           class="post-tag no-text-decoration" >
           {{- tag -}}
         </a>
