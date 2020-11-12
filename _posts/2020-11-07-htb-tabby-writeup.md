@@ -7,7 +7,7 @@ tags: [hackthebox, tabby, lfi, tomcat, zip2john, lxd, container]
 image: /assets/img/post/htb/tabby/01_infocard.png
 ---
 
-![image](/assets/img/post/htb/tabby/01_infocard.png)
+
 
 [ LFI ] [ Tomcat ] [ Zip2John ] [ LXD ] This was an easy difficulty box. It was pretty easy and straight-forward box. Good learning path to:
 * LFI File Enumeration
