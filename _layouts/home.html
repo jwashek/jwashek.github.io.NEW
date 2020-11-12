@@ -64,10 +64,10 @@ layout: page
       {% include timeago.html date=post.date tooltip=true %}
 
       <!-- tag -->
-      <i class="fa fa-tags fa-fw mr-1"></i>
+      {% capture result_elem %}
+        <i class="fa fa-tags fa-fw mr-1"></i>{tag}
+      {% endcapture %}
       
-      <i class="far fa-folder fa-fw"></i>{categories}
-      <i class="fa fa-tag fa-fw"></i>{tags}
      
       
       <!-- page views -->
