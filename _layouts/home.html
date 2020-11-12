@@ -64,7 +64,7 @@ layout: page
       {% include timeago.html date=post.date tooltip=true %}
 
       <i class="fa fa-tag fa-fw"></i>
-      {% tags %}
+      {% include tag.html %}
 
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
