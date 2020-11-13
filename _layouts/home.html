@@ -54,7 +54,7 @@ layout: page
     <div class="post-content">
       <p>
         {% include no-linenos.html content=post.content %}
-        {{ content | markdownify | truncate: 200 }} 
+        <!-- {{ content | markdownify | truncate: 200 }} -->
       </p>
     </div>
 
@@ -65,7 +65,7 @@ layout: page
       
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
-      {% include tag-list.html %}
+      
 
       
          
