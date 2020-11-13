@@ -64,6 +64,12 @@ layout: page
       {% include timeago.html date=post.date tooltip=true %}
       
       <!-- tag -->
+      {% if site.tags[page.tag] %}
+        <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
+          class="post-tag no-text-decoration" >
+        {{- tag -}}
+        </a>
+
       <i class="fa fa-tags fa-fw mr-1"></i>
       
 
