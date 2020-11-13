@@ -65,8 +65,15 @@ layout: page
       
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
+      <span class="post-tags">
+        [&nbsp;
+        {% for tag in page.tags %}
+          {% capture tag_name %}{{ tag }}{% endcapture %}
+          <a class="no-underline" href="/tag/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code>&nbsp;</a>    
+        {% endfor %}
+        ]
+      </span>
 
-      
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
       <i class="far fa-eye fa-fw"></i>
