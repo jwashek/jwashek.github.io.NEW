@@ -65,18 +65,8 @@ layout: page
       
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
-      {% if page.tag %}
-        <a href="{{ post.url | relative_url }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
-          class="post-tag no-text-decoration" >
-        {{- tag -}}
-        </a>
 
       
-      
-
-      
-         
-
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
       <i class="far fa-eye fa-fw"></i>
