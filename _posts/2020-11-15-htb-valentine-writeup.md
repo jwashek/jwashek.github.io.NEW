@@ -141,8 +141,24 @@ RUgZkbMQZNIIfzj1QuilRVBm/F76Y/YMrmnM9k/1xSGIskwCUQ+95CGHJE8MkhD3
 -----END RSA PRIVATE KEY-----
 ```
 
-> **NOTE**: -r - reverse operation: convert (or patch) hexdump into binary
-> **NOTE**: -p - Output in postscript continuous hexdump style. Also known as plain hexdump style
+> **NOTE**: -r - reverse operation: convert (or patch) hexdump into binary; -p - Output in postscript continuous hexdump style. Also known as plain hexdump style
+
+
+### Decrypt RSA Private Key (Heartbleed)
+
+When we try to decrypt the private key, it will prompt you with "Enter pass phrase..." 
+
+```console
+$ cat hype_key | xxd -p -r > hype_key_enc
+$ openssl rsa -in hype_key.enc -out hype_key.dec
+Enter pass phrase for hype_key.enc:
+unable to load Private Key
+140557154002176:error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt:../crypto/evp/evp_enc.c:583:
+140557154002176:error:0906A065:PEM routines:PEM_do_header:bad decrypt:../crypto/pem/pem_lib.c:461:
+```
+
+So going back to the image in the web page, that appeared to be suggesting an attack called Heartbleed. In short, Heartbleed is an OpenSSL vulnerability that allows an attacker to trick the vulnreable web server to leak a chunk of memory. 
+
 
 
 
