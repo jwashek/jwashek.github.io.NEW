@@ -62,6 +62,10 @@ layout: page
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=true %}
       
+      <!-- tag -->
+      <i class="fa fa-tags fa-fw mr-1"></i>
+      <span>{{post.tags | join: ", "}}</span>
+      
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
       <i class="far fa-eye fa-fw"></i>
@@ -70,9 +74,7 @@ layout: page
       </span>
       {% endif %}
 
-      <!-- tag -->
-      <i class="fa fa-tags fa-fw mr-1"></i>
-      <span>{{post.tags | join: ", "}}</span>
+      
     </div>
 
   </div> <!-- .post-review -->
