@@ -72,7 +72,13 @@ layout: page
 
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
-      <span>{{post.tags | join: ", " | downcase | url_encode }}</span>
+      <!--<span>{{post.tags | join: ", " | downcase | url_encode }}</span>-->
+      <span>
+        <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
+        class="post-tag no-text-decoration" >
+        {{- tag -}}
+      </a>
+      </span>
     </div>
 
   </div> <!-- .post-review -->
