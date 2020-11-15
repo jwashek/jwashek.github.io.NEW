@@ -4,13 +4,8 @@ author: bigb0ss
 date: 2020-11-05 21:36:00 +0800
 categories: [Hack The Box, Linux, Insane]
 tags: [hackthebox, mischief, SNMP, IPv6, ICMP, systemd-run]
+image: /assets/img/post/htb/mischief/01_infocard.png
 ---
-
-![image](/assets/img/post/htb/mischief/01_infocard.png)
-
-
-
-
 
 This was an insane difficulty box and had many tricky steps to fully compromise it. Good learning path to:
 * UDP Service Enumeration

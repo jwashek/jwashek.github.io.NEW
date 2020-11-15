@@ -4,13 +4,8 @@ author: bigb0ss
 date: 2020-10-25 23:25:00 +0800
 categories: [Hack The Box, Linux, Medium]
 tags: [hackthebox, cache, vhost, openemr, SQLi, memcached, docker, docker-privesc]
+image: /assets/img/post/htb/cache/01_infocard.png
 ---
-
-![image](/assets/img/post/htb/cache/01_infocard.png)
-
-
-
-
 
 This was a medium-difficulty box and good learning path to:
 * Client-side Auth Source Code Review
