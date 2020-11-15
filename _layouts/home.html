@@ -60,7 +60,7 @@ layout: page
     <div class="post-content">
       <p>
         {% include no-linenos.html content=post.content %}
-        {{ content | markdownify | truncate: 200 }}
+        {{ content | markdownify | strip_html | truncate: 200 }}
       </p>
     </div>
 
@@ -68,10 +68,6 @@ layout: page
       <!-- posted date -->
       <i class="far fa-clock fa-fw"></i>
       {% include timeago.html date=post.date tooltip=true %}
-
-      <!-- tag -->
-      <i class="fa fa-tag fa-fw"></i>
-      <span>{{post.tags | join: ", "}}</span>
 
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
@@ -81,8 +77,10 @@ layout: page
       </span>
       {% endif %}
 
+      <!-- tag -->
+      <i class="fa fa-tag fa-fw"></i>
+      <span>{{post.tags | join: ", "}}</span>
       
-
     </div>
   </div> <!-- .post-review -->
 
