@@ -4,6 +4,7 @@ author: bigb0ss
 date: 2020-10-24 23:25:00 +0800
 categories: [Hack The Box, Linux, Easy]
 tags: [hackthebox, blunder, Bludit CMS 3.9.2, Bruteforce Bypass, Sudo Bypass]
+image: /assets/img/post/htb/blunder/01_infocard.png
 ---
 
 ![image](/assets/img/post/htb/blunder/01_infocard.png)
