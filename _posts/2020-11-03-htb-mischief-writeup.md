@@ -7,7 +7,7 @@ tags: [hackthebox, mischief, SNMP, IPv6, ICMP, systemd-run]
 image: /assets/img/post/htb/mischief/01_infocard.png
 ---
 
-This was an insane difficulty box and had many tricky steps to fully compromise it. Good learning path to:
+This was an insane difficulty box and had many tricky steps to fully compromise it. Good learning path for:
 * UDP Service Enumeration
 * SNMP to obtain IPv6 Address
 * ICMP Data Exfiltration

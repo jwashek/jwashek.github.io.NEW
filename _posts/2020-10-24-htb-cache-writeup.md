@@ -7,7 +7,7 @@ tags: [hackthebox, cache, vhost, openemr, SQLi, memcached, docker, docker-prives
 image: /assets/img/post/htb/cache/01_infocard.png
 ---
 
-This was a medium-difficulty box and good learning path to:
+This was a medium-difficulty box and good learning path for:
 * Client-side Auth Source Code Review
 * VHOST Enumeration
 * OpenEMR < 5.0.1 - Multiple SQLi
