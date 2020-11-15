@@ -2,7 +2,6 @@
 layout: page
 ---
 
-
 {% assign pinned = site.posts | where_exp: "item", "item.pin == true"  %}
 {% assign default = site.posts | where_exp: "item", "item.pin != true"  %}
 {% assign posts = "" | split: "" %}
@@ -65,7 +64,8 @@ layout: page
       
       <!-- tag -->
       <i class="fa fa-tags fa-fw mr-1"></i>
-      
+      <span>{{post.tags | join: ", "}}</span>
+
       <!-- page views -->
       {% if site.google_analytics.pv.enabled %}
       <i class="far fa-eye fa-fw"></i>
