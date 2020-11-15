@@ -76,7 +76,7 @@ layout: page
       <span>
         <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
         class="post-tag no-text-decoration" >
-        {{- tag -}}
+        {{ post.tags | join: ", " | downcase }}
       </a>
       </span>
     </div>
