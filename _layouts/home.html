@@ -82,6 +82,18 @@ layout: page
       <!-- tag -->
       <i class="fa fa-tag fa-fw"></i>
       <span>{{post.tags | join: ", "}}</span>
+
+      {% if post.tags != null %}
+        <div class="post-tags">
+          <i class="fa fa-tags fa-fw mr-1"></i>
+          {% for tag in post.tags %}
+          <a href="{{ site.baseurl }}/tags/{{ tag | replace: ' ', '-' | downcase | url_encode }}/"
+            class="post-tag no-text-decoration" >
+            {{- tag -}}
+          </a>
+          {% endfor %}
+        </div>
+      {% endif %}
       
     </div>
   </div> <!-- .post-review -->
