@@ -3,7 +3,7 @@ title: HTB - Valentine Write-up
 author: bigb0ss
 date: 2020-11-16 19:36:00 +0800
 categories: [Hack The Box, Linux, Easy]
-tags: [hackthebox, frolic, ]
+tags: [hackthebox, frolic, js, Ook!, frackzip]
 image: /assets/img/post/htb/frolic/01_infocard.png
 ---
 
@@ -128,6 +128,79 @@ I was essentially a client-side login script that disclosed the login credential
 The `success.html` was a bunch of weird characters... indicating another puzzle game.
 
 ![image](/assets/img/post/htb/frolic/09.png)
+
+
+### Decoding Ook! Programming Language
+
+Google search found that this was an `Ook! Programing Language` so I used the online decoder to retrieve the following plain-text from it: `Nothing here check /asdiSIAJJ0QWE9JAS`.
+
+![image](/assets/img/post/htb/frolic/10.png)
+
+
+### Base64 Encoded Zip File
+
+Next, I went to this directory `http://10.10.10.111:9999/asdiSIAJJ0QWE9JAS/`, and there was another challenge. It looked like a base64 encoded string. 
+
+![image](/assets/img/post/htb/frolic/11.png)
+
+First attempt to decode the base64 encode string resulted in `invalid input` error. 
+
+```console
+root@kali:~/Documents/htb/box/frolic# echo -n "UEsDBBQACQAIAMOJN00j/lsUsAAAAGkCAAAJABwAaW5kZXgucGhwVVQJAAOFfKdbhXynW3V4CwAB BAAAAAAEAAAAAF5E5hBKn3OyaIopmhuVUPBuC6m/U3PkAkp3GhHcjuWgNOL22Y9r7nrQEopVyJbs K1i6f+BQyOES4baHpOrQu+J4XxPATolb/Y2EU6rqOPKD8uIPkUoyU8cqgwNE0I19kzhkVA5RAmve EMrX4+T7al+fi/kY6ZTAJ3h/Y5DCFt2PdL6yNzVRrAuaigMOlRBrAyw0tdliKb40RrXpBgn/uoTj lurp78cmcTJviFfUnOM5UEsHCCP+WxSwAAAAaQIAAFBLAQIeAxQACQAIAMOJN00j/lsUsAAAAGkC AAAJABgAAAAAAAEAAACkgQAAAABpbmRleC5waHBVVAUAA4V8p1t1eAsAAQQAAAAABAAAAABQSwUG AAAAAAEAAQBPAAAAAwEAAAAA" | base64 -d
+PK     É7M#�[�i index.phpUT     �|�[�|�[ux
+                                          base64: invalid input
+```
+
+I noticed that there were some spaces within the encoded string, so I removed them and attemtped to decode it. And it decoded without any error this time.
+
+```console
+root@kali:~/Documents/htb/box/frolic# echo -n "UEsDBBQACQAIAMOJN00j/lsUsAAAAGkCAAAJABwAaW5kZXgucGhwVVQJAAOFfKdbhXynW3V4CwAB BAAAAAAEAAAAAF5E5hBKn3OyaIopmhuVUPBuC6m/U3PkAkp3GhHcjuWgNOL22Y9r7nrQEopVyJbs K1i6f+BQyOES4baHpOrQu+J4XxPATolb/Y2EU6rqOPKD8uIPkUoyU8cqgwNE0I19kzhkVA5RAmve EMrX4+T7al+fi/kY6ZTAJ3h/Y5DCFt2PdL6yNzVRrAuaigMOlRBrAyw0tdliKb40RrXpBgn/uoTj lurp78cmcTJviFfUnOM5UEsHCCP+WxSwAAAAaQIAAFBLAQIeAxQACQAIAMOJN00j/lsUsAAAAGkC AAAJABgAAAAAAAEAAACkgQAAAABpbmRleC5waHBVVAUAA4V8p1t1eAsAAQQAAAAABAAAAABQSwUG AAAAAAEAAQBPAAAAAwEAAAAA" | sed 's/ //g' | base64 -d
+PK     É7M#�[�i index.phpUT     �|�[�|�[ux
+                                          ^D�J�s�h�)�P�n
+                                                        ��Ss�Jw▒܎��4��k�z��UȖ�+X��P��ᶇ��л�x_�N�[���S��8�����J2S�*�DЍ}�8dTQk������j_���▒���'xc��ݏt��75Q�
+                                                                                                                                                       ���k,4��b)�4F��  ���������&q2o�WԜ�9P#�[�iPK É7M#�[�i ▒��index.phpUT�|�[ux
+                                                    PKO
+```
+
+So, I outputed the result into a file `base64.dec`. When I `file` the file, it was a `zip` file, but it was protected with a password. 
+
+```console
+root@kali:~/Documents/htb/box/frolic# echo -n "UEsDBBQACQAIAMOJN00j/lsUsAAAAGkCAAAJABwAaW5kZXgucGhwVVQJAAOFfKdbhXynW3V4CwAB BAAAAAAEAAAAAF5E5hBKn3OyaIopmhuVUPBuC6m/U3PkAkp3GhHcjuWgNOL22Y9r7nrQEopVyJbs K1i6f+BQyOES4baHpOrQu+J4XxPATolb/Y2EU6rqOPKD8uIPkUoyU8cqgwNE0I19kzhkVA5RAmve EMrX4+T7al+fi/kY6ZTAJ3h/Y5DCFt2PdL6yNzVRrAuaigMOlRBrAyw0tdliKb40RrXpBgn/uoTj lurp78cmcTJviFfUnOM5UEsHCCP+WxSwAAAAaQIAAFBLAQIeAxQACQAIAMOJN00j/lsUsAAAAGkC AAAJABgAAAAAAAEAAACkgQAAAABpbmRleC5waHBVVAUAA4V8p1t1eAsAAQQAAAAABAAAAABQSwUG AAAAAAEAAQBPAAAAAwEAAAAA" | sed 's/ //g' | base64 -d > base64.dec
+
+root@kali:~/Documents/htb/box/frolic# file base64.dec 
+base64.dec: Zip archive data, at least v2.0 to extract
+
+root@kali:~/Documents/htb/box/frolic# mv base64.dec base64.zip
+
+root@kali:~/Documents/htb/box/frolic# unzip base64.zip 
+Archive:  base64.zip
+[base64.zip] index.php password:
+```
+
+<b>fcrackzip</b>
+
+Then, I used `fcrackzip` to brute force the password for the `zip` file. The password was `password`.
+
+```console
+root@kali:~/Documents/htb/box/frolic# fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt base64.zip 
+
+
+PASSWORD FOUND!!!!: pw == password
+```
+
+### Decoding index.php
+
+The output file was looking like this:
+
+```console
+root@kali:~/Documents/htb/box/frolic# cat index.php 
+4b7973724b7973674b7973724b7973675779302b4b7973674b7973724b7973674b79737250463067506973724b7973674b7934744c5330674c5330754b7973674b7973724b7973674c6a77720d0a4b7973675779302b4b7973674b7a78645069734b4b797375504373674b7974624c5434674c53307450463067506930744c5330674c5330754c5330674c5330744c5330674c6a77724b7973670d0a4b317374506973674b79737250463067506973724b793467504373724b3173674c5434744c53304b5046302b4c5330674c6a77724b7973675779302b4b7973674b7a7864506973674c6930740d0a4c533467504373724b3173674c5434744c5330675046302b4c5330674c5330744c533467504373724b7973675779302b4b7973674b7973385854344b4b7973754c6a776743673d3d0d0a
+```
+
+It looks like a hexdump, so when I reverse them into binary format, I can get 
+
+
+
 
 
 
