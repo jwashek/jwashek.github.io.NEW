@@ -207,19 +207,12 @@ It looks like a hexdump, so when I reverse them into binary format, I can get
 
 ## Initial Foothold
 
-### SSH (RSA Private Key)
 
-<b>user.txt</b>
 
 
 
 ## Privilege Escalation
 
-### hype —> root (Tmux)
-
-
-
-<b>root.txt</b>
 
 
 
