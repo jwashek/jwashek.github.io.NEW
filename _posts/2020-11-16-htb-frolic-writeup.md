@@ -71,16 +71,63 @@ Host script results:
 ![image](/assets/img/post/htb/frolic/03.png)
 
 
-
-
 ### Web Directory Enumeration (gobuster)
 
 Let's run `gobuster` against the web service. 
 
 ```console
+$ gobuster dir -u http://10.10.10.111:9999/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
 
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:            http://10.10.10.111:9999/
+[+] Threads:        10
+[+] Wordlist:       /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+[+] Status codes:   200,204,301,302,307,401,403
+[+] User Agent:     gobuster/3.0.1
+[+] Timeout:        10s
+===============================================================
+2020/11/17 21:46:17 Starting gobuster
+===============================================================
+/admin (Status: 301)
+/test (Status: 301)
+/dev (Status: 301)
+/backup (Status: 301)
+/loop (Status: 301)
 ```
 
+It found the several interesting directories. 
+
+`/dev` and `/loop` were forbidden pages.
+
+`/admin` was another login page:
+
+![image](/assets/img/post/htb/frolic/04.png)
+
+`/test` was a `phpinfo()` page:
+
+![image](/assets/img/post/htb/frolic/05.png)
+
+`/backup` had some more interesting files. We can obtain a set of credentials from these files: `admin : imnothuman`. These credentials did not work for both Node-RED and c'mon i m hackable logins. 
+
+![image](/assets/img/post/htb/frolic/06.png)
+
+
+### Source Code Review (c'mon i m hackable Login)
+
+Next, I quickly checked the source code for the c'mon i m hackable login page and found an interesting JavaScript `login.js`.
+
+![image](/assets/img/post/htb/frolic/07.png)
+
+I was essentially a client-side login script that disclosed the login credentials: `admin : superduperlooperpassword_lol` and the redirecting page after login: `success.html`.
+
+![image](/assets/img/post/htb/frolic/08.png)
+
+The `success.html` was a bunch of weird characters... indicating another puzzle game.
+
+![image](/assets/img/post/htb/frolic/09.png)
 
 
 
