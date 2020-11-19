@@ -8,7 +8,11 @@ image: /assets/img/post/htb/frolic/01_infocard.png
 ---
 
 This was an easy difficulty box. Good learning path for:
-* 
+* Source Code Review (Client-side JavaScript Authentication)
+* Puzzles - Various Encoding Programming
+* Bruteforcing Password Protected .ZIP File
+* playSMS Malicious .csv File Upload RCE
+* x86 Binary Exploit (NX Enabled; ASLR Disabled; ret2libc Attack)
 
 
 # Initial Recon
