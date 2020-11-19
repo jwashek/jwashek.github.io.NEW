@@ -4,7 +4,7 @@ author: bigb0ss
 date: 2020-10-23 23:25:00 +0800
 categories: [RedTeam, Cobalt Strike]
 tags: [cobalt strike, malleable c2, redteam]
-image: /assets/img/post/redteam-cobalt-strike/cobalt_strike_logo.png
+image: /assets/img/post/redteam-cobalt-strike/cs.jpg
 pin: true
 ---
 
