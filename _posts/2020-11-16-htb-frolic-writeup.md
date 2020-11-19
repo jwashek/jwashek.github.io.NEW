@@ -312,7 +312,7 @@ www-data@frolic:~/html/playsms$ cat /home/ayush/user.txt
 2ab9***REDACTED***2fe0
 ```
 
-### Binary Exploit (ROP)
+### Binary Exploit (ROP - ret2libc)
 
 Further enum identified an interesting file called `rop`. It just take the user input and print it. We also know that the binary is owned by `root` so it will be some type of binary challege for privilege escalation.
 
@@ -337,11 +337,41 @@ Using `nc`, we can tranfer the `rop` file to our local box.
 
 ![image](/assets/img/post/htb/frolic/19.png)
 
+### Target Environment Enumeration
 
+Also, it might be a good idea to enum the target environment. 
 
+`uname -a` is telling the Frolic box is x86 (32-bit) machine.
 
+```console
+www-data@frolic:/home/ayush/.binary$ uname -a
+Linux frolic 4.4.0-116-generic #140-Ubuntu SMP Mon Feb 12 21:22:43 UTC 2018 i686 athlon i686 GNU/Linux
+```
 
+ASLR is disabled on the box as well. (1 = Enabled; 0 = Disabled)
 
+```console
+www-data@frolic:/home/ayush/.binary$ cat /proc/sys/kernel/randomize_va_space 
+0
+```
+
+### Binary (rop) Enumeration
+
+Let's quickly check if we can cause stack-based BOF to the binary. 
+
+```console
+root@kali:~/Documents/htb/box/frolic# ./rop $(python -c 'print "A" * 10')
+[+] Message sent: AAAAAAAAAA
+
+root@kali:~/Documents/htb/box/frolic# ./rop $(python -c 'print "A" * 100')
+Segmentation fault
+```
+
+Ok, so we can confirm if we supply too many strings, we can crash the program. 
+
+Let's do further enumeration about the binary using `gdb` (I am using `gdb-peta`)
+
+First, we can check for its security. And NX (DEP) is only ENABLED. When this option is enabled, it works with the processor to help prevent buffer overflow attacks by blocking code execution from memory that is marked as non-executable. But we can circumvent this by introducing a technique called ROP (Return Oriented Programming). I have written some blog about this previously. It can be found [here](https://medium.com/bugbountywriteup/expdev-exploit-exercise-protostar-stack-6-ef75472ec7c6).
 
 
 
