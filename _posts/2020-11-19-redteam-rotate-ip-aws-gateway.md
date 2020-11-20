@@ -19,3 +19,9 @@ Login to your AWS account
 
 ![image](/assets/img/post/redteam/infra/cloud/aws/01.png)
 
+Select `REST API` 
+
+>**NOTE**: This will allow synchronous communication.
+
+![image](/assets/img/post/redteam/infra/cloud/aws/02.png)
+
