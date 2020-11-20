@@ -19,9 +19,53 @@ Login to your AWS account
 
 ![image](/assets/img/post/redteam/infra/cloud/aws/01.png)
 
-Select `REST API` 
+Select `REST API` and click `Build`
 
 >**NOTE**: This will allow synchronous communication.
 
 ![image](/assets/img/post/redteam/infra/cloud/aws/02.png)
 
+Click `New API`
+  --> "API name" : Any Name (e.g., bigb0ss_api_test)
+  --> "Endpoint Type": Regional
+  --> Click `Create API`
+
+![image](/assets/img/post/redteam/infra/cloud/aws/03.png)
+
+
+Click `Actions` drop-down menu
+  --> Select `Create Method`
+
+![image](/assets/img/post/redteam/infra/cloud/aws/04.png)
+
+Select `ANY`
+  --> Click the check mark
+
+![image](/assets/img/post/redteam/infra/cloud/aws/05.png)
+
+Select `HTTP`
+  --> "Endpoint URL" : Your Target URL (e.g., https://mail.victim.com)
+  --> Click `Save`   
+
+>**NOTE**: I added my EC2 IP to show the IP rotation later in this blog.
+
+![image](/assets/img/post/redteam/infra/cloud/aws/06.png)
+
+Click `Method Request`
+
+![image](/assets/img/post/redteam/infra/cloud/aws/07.png)
+
+Click the down arrow next to `HTTP Request Headers`
+  --> Click `Add header`
+
+![image](/assets/img/post/redteam/infra/cloud/aws/08.png)
+
+Add “X-My-X-Forwarded-For” to `Name` 
+  -—> Click the check mark 
+  
+![image](/assets/img/post/redteam/infra/cloud/aws/09.png) 
+
+
+
+
+—> Click “Method Execution” to return to the previous page
