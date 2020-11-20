@@ -4,7 +4,7 @@ author: bigb0ss
 date: 2020-11-19 23:36:00 +0800
 categories: [RedTeam, Infrastructure, Cloud, AWS]
 tags: [aws api gateway, cloud, rotate ip, redteam]
-image: /assets/img/post/redteam/infra/cloud/aws/logo.jpg
+image: /assets/img/post/redteam/infra/cloud/aws/logo.png
 ---
 
 # Intro
