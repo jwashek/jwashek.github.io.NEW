@@ -36,7 +36,7 @@ The contact page disclosing the version of the application:
 
 # Initial Foothold
 
-That particular version of the software was vulnerable to an Unauthenticated Remote Code Execution discovered by Bobby Cooke. The POC exploitation script can be found [here] (https://www.exploit-db.com/exploits/48506).
+That particular version of the software was vulnerable to an Unauthenticated Remote Code Execution discovered by Bobby Cooke. The POC exploitation script can be found [here](https://www.exploit-db.com/exploits/48506).
 
 ## Gym Management System 1.0 - Unauthenticated Remote Code Execution
 
@@ -73,7 +73,7 @@ Within the `shaun` user’s Download directory, there was a binary called `Cloud
 
 ![image](/assets/img/post/htb/buff/07.png)
 
-With some Google search, I found a BOF exploit for this CloudMe version 1.11.2 [here] (https://www.exploit-db.com/exploits/48389). From the POC script, the port for the CloudMe product was `8888` and that port was indeed in use on the Buff box; however, it was only accessible locally. 
+With some Google search, I found a BOF exploit for this CloudMe version 1.11.2 [here](https://www.exploit-db.com/exploits/48389). From the POC script, the port for the CloudMe product was `8888` and that port was indeed in use on the Buff box; however, it was only accessible locally. 
 
 > **NOTE**: I did not dig in further, but the PID for the CloudMe.exe kept changing. I suspected it was happening because of some type of scheduled tasks.
 
