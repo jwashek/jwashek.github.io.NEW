@@ -3,9 +3,16 @@ title: HTB - Teacher Write-up
 author: bigb0ss
 date: 2020-11-22 23:25:00 +0800
 categories: [Hack The Box, Linux, Easy]
-tags: [hackthebox, teacher, ]
+tags: [hackthebox, teacher, moodle RCE, cronjob]
 image: /assets/img/post/htb/teacher/01_infocard.png
 ---
+
+This one was an easy difficulty box. Good learning path for:
+* Login Brute-forcing
+* Moodle RCE - Math Formular Abuse
+* MySQL DB Enum to Extract Password
+* Privilege Escalation via Cronjob
+
 
 # Initial Recon
 
@@ -321,25 +328,4 @@ giovanni@teacher:~/work/tmp$ cat /root/root.txt
 ```
 
 Thanks for reading!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

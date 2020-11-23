@@ -7,6 +7,12 @@ tags: [hackthebox, buff, gymManagementSystem 1.0 RCE, plink, cloudMe bof]
 image: /assets/img/post/htb/buff/01_infocard.png
 ---
 
+This one was an easy difficulty box. Good learning path for:
+* Gym Management System 1.0 RCE
+* `plink.exe` to Port Forward to Bypass Restrictions
+* `cloudMe.exe` BoF Exploit
+
+
 # Initial Recon
 
 ## Nmap
