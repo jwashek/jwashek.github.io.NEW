@@ -310,7 +310,15 @@ nadine@SERVMON C:\Users\Nadine\Desktop>type user.txt
 
 # Privilege Escalation
 
-## 
+## Nadine --> SYSTEM (NSClient++ Privilege Escalation)
+
+There is a public privilege escalation for NSClient++. It can be found [here](https://www.exploit-db.com/exploits/46802). In a nutshell, a low privileged user can read the web admin password for NSClient++ from its configuration file. Within the web, due to a lack of restrictions, a user can create a scheduled script to run and NSClient++ is usually running as a Local SYSTEM. Abusing this, one can escalate its privilege to SYSTEM. 
+
+
+
+
+
+
 
 Thanks for reading!
 
