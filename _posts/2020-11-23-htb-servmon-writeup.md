@@ -279,6 +279,33 @@ Impacket v0.9.21-dev - Copyright 2019 SecureAuth Corporation
 Type help for list of commands
 ```
 
+## SSH Login
+
+Using that credentials, we can ssh into the box and read the `user.txt` flag.
+
+<b>user.txt</b>
+
+```console
+Microsoft Windows [Version 10.0.18363.752]          
+(c) 2019 Microsoft Corporation. All rights reserved.
+                                                    
+nadine@SERVMON C:\Users\Nadine>cd desktop           
+
+nadine@SERVMON C:\Users\Nadine\Desktop>dir
+ Volume in drive C has no label.                  
+ Volume Serial Number is 728C-D22C                
+                                                  
+ Directory of C:\Users\Nadine\Desktop             
+                                                  
+08/04/2020  21:28    <DIR>          .             
+08/04/2020  21:28    <DIR>          ..            
+24/11/2020  04:43                34 user.txt      
+               1 File(s)             34 bytes     
+               2 Dir(s)  27,726,118,912 bytes free
+                                                  
+nadine@SERVMON C:\Users\Nadine\Desktop>type user.txt
+190d ***REDACTED*** ec7f
+```
 
 
 # Privilege Escalation
