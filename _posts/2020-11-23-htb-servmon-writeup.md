@@ -216,7 +216,7 @@ Further Google search found that `NVMS-1000` is vulnerable to a directory traver
 
 Leveraging this vulnerability, we can view the `/Users/Nathan/Desktop/Passwords.txt` file.
 
-![image](/assets/img/post/htb/servmon/045png)
+![image](/assets/img/post/htb/servmon/05png)
 
 
 ## SMB Password Guessing
