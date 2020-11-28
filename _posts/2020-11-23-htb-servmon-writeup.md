@@ -1,15 +1,16 @@
 ---
 title: HTB - ServMon Write-up
 author: bigb0ss
-date: 2020-11-23 23:25:00 +0800
+date: 2020-11-25 18:39:00 +0800
 categories: [Hack The Box, Windows, Easy]
-tags: [hackthebox, servmon, anonaymous FTP, NVMS-1000 directory traversal, NSClient++]
+tags: [hackthebox, servmon, anonaymous FTP, NVMS-1000 directory traversal, SMB Password Guessing, NSClient++]
 image: /assets/img/post/htb/servmon/01_infocard.png
 ---
 
 This one was an easy-difficulty Windows box. Good learning path for:
 * Anonymous FTP Access and Enumeration
 * NVMS-1000 Directory Traversal Attack
+* SMB Password Guessing (smbclient.py)
 * NSClient++ Privilege Escalation
 
 
