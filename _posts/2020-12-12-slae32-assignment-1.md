@@ -107,12 +107,12 @@ First, we need to collect arguemnts for `socketcall()` as well as other `syscall
 By querying `/usr/include/i386-linux-gnu/asm/unistd_32.h`, we can collect the following args for the `syscalls`:
 
 ```console
-#define __NR_socketcall 102	--> Hex: 0x66
-#define __NR_bind 		361 --> Hex: 0x169
-#define __NR_listen 	363 --> Hex: 0x16b
-#define __NR_accept4 	364 --> Hex: 0x16c
-#define __NR_dup2 		63  --> Hex: 0x3f
-#define __NR_execve 	11  --> Hex: 0xb
+#define __NR_socketcall	102 --> Hex: 0x66
+#define __NR_bind		361 --> Hex: 0x169
+#define __NR_listen		363 --> Hex: 0x16b
+#define __NR_accept4	364 --> Hex: 0x16c
+#define __NR_dup2		63  --> Hex: 0x3f
+#define __NR_execve		11  --> Hex: 0xb
 ```
 
 Additionally, by looking at `/usr/include/linux/net.h`, we can also obtain args for the function calls:
@@ -179,7 +179,14 @@ mov edi, eax		; Save the socketcall file descriptor to EDI
 
 Let's create the `bind()` shellcode:
 
-```asm
+```ASM
+; 2) Bind
+; bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+; 	struct sockaddr_in addr;
+;	addr.sin_family = AF_INET; 
+;	addr.sin_port = htons(port);
+;	addr.sin_addr.s_addr = INADDR_ANY;
+
 
 ```
 
