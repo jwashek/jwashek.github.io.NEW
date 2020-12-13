@@ -145,7 +145,7 @@ root@kali:~/Documents/SLAE32/Exam/Assignement1# cat /usr/include/linux/net.h | g
 
 First, let's zero out some of the registers we are going to use:
 
-```ASM
+```s
 global _start
 
 section		.text
@@ -161,7 +161,7 @@ xor edx, edx
 
 Let's create the `socket()` shellcode:
 
-```ASM
+```s
 ; 1) Socket Creation
 ; sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -179,9 +179,10 @@ mov edi, eax		; Save the socketcall file descriptor to EDI
 
 Let's create the `bind()` shellcode:
 
-```ASM
+```s
 ; 2) Bind
 ; bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+;
 ; 	struct sockaddr_in addr;
 ;	addr.sin_family = AF_INET; 
 ;	addr.sin_port = htons(port);
