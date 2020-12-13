@@ -48,6 +48,7 @@ int main()
 	int sockfd, acceptfd;
 	int port = 9001;
 
+	// Server Address struct
 	struct sockaddr_in addr;
 	addr.sin_family = AF_INET; 
 	addr.sin_port = htons(port);
@@ -108,37 +109,37 @@ By querying `/usr/include/i386-linux-gnu/asm/unistd_32.h`, we can collect the fo
 
 ```console
 #define __NR_socketcall	102 --> Hex: 0x66
-#define __NR_bind		361 --> Hex: 0x169
-#define __NR_listen		363 --> Hex: 0x16b
+#define __NR_bind	361 --> Hex: 0x169
+#define __NR_listen	363 --> Hex: 0x16b
 #define __NR_accept4	364 --> Hex: 0x16c
-#define __NR_dup2		63  --> Hex: 0x3f
-#define __NR_execve		11  --> Hex: 0xb
+#define __NR_dup2	63  --> Hex: 0x3f
+#define __NR_execve	11  --> Hex: 0xb
 ```
 
 Additionally, by looking at `/usr/include/linux/net.h`, we can also obtain args for the function calls:
 
 ```console
 root@kali:~/Documents/SLAE32/Exam/Assignement1# cat /usr/include/linux/net.h | grep SYS
-#define SYS_SOCKET		1		/* sys_socket(2)			*/
-#define SYS_BIND		2		/* sys_bind(2)				*/
-#define SYS_CONNECT		3		/* sys_connect(2)			*/
-#define SYS_LISTEN		4		/* sys_listen(2)			*/
-#define SYS_ACCEPT		5		/* sys_accept(2)			*/
-#define SYS_GETSOCKNAME	6		/* sys_getsockname(2)		*/
-#define SYS_GETPEERNAME	7		/* sys_getpeername(2)		*/
-#define SYS_SOCKETPAIR	8		/* sys_socketpair(2)		*/
-#define SYS_SEND		9		/* sys_send(2)				*/
-#define SYS_RECV		10		/* sys_recv(2)				*/
-#define SYS_SENDTO		11		/* sys_sendto(2)			*/
-#define SYS_RECVFROM	12		/* sys_recvfrom(2)			*/
-#define SYS_SHUTDOWN	13		/* sys_shutdown(2)			*/
-#define SYS_SETSOCKOPT	14		/* sys_setsockopt(2)		*/
-#define SYS_GETSOCKOPT	15		/* sys_getsockopt(2)		*/
-#define SYS_SENDMSG		16		/* sys_sendmsg(2)			*/
-#define SYS_RECVMSG		17		/* sys_recvmsg(2)			*/
-#define SYS_ACCEPT4		18		/* sys_accept4(2)			*/
-#define SYS_RECVMMSG	19		/* sys_recvmmsg(2)			*/
-#define SYS_SENDMMSG	20		/* sys_sendmmsg(2)			*/
+#define SYS_SOCKET	1		/* sys_socket(2)	*/
+#define SYS_BIND	2		/* sys_bind(2)	*/
+#define SYS_CONNECT	3		/* sys_connect(2)	*/
+#define SYS_LISTEN	4		/* sys_listen(2)	*/
+#define SYS_ACCEPT	5		/* sys_accept(2)	*/
+#define SYS_GETSOCKNAME	6		/* sys_getsockname(2)	*/
+#define SYS_GETPEERNAME	7		/* sys_getpeername(2)	*/
+#define SYS_SOCKETPAIR	8		/* sys_socketpair(2)	*/
+#define SYS_SEND	9		/* sys_send(2)	*/
+#define SYS_RECV	10		/* sys_recv(2)	*/
+#define SYS_SENDTO	11		/* sys_sendto(2)	*/
+#define SYS_RECVFROM	12		/* sys_recvfrom(2)	*/
+#define SYS_SHUTDOWN	13		/* sys_shutdown(2)	*/
+#define SYS_SETSOCKOPT	14		/* sys_setsockopt(2)	*/
+#define SYS_GETSOCKOPT	15		/* sys_getsockopt(2)	*/
+#define SYS_SENDMSG	16		/* sys_sendmsg(2)	*/
+#define SYS_RECVMSG	17		/* sys_recvmsg(2)	*/
+#define SYS_ACCEPT4	18		/* sys_accept4(2)	*/
+#define SYS_RECVMMSG	19		/* sys_recvmmsg(2)	*/
+#define SYS_SENDMMSG	20		/* sys_sendmmsg(2)	*/
 ```
 
 ## Initialization
