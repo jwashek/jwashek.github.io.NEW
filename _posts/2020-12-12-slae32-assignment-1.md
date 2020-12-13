@@ -13,7 +13,18 @@ http://securitytube-training.com/online-courses/securitytube-linux-assembly-expe
 
 Student ID: SLAE-1542
 
+# Assignement #1 
+* Create a Shell_Bind_TCP shellcode
+	- Binds to a port
+	- Execs Shell on incoming connection
 
+* Port number should be easily configurable
+
+
+# What is Bind Shell?
+Bind TCP opens up a port on the victim system. If an attacker could exploit a vulnerability on the victim system, she can implant a bind shell and connect to it from the remote attaking box. However, due to a firewall and detection controls, reverse TCP shell is preferrable over bind TCP shell thesedays.
+
+![image](/assets/img/post/slae32/assignment1/01.png)
 
 
 
