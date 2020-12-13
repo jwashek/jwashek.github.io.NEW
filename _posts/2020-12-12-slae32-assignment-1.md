@@ -4,7 +4,7 @@ author: bigb0ss
 date: 2020-12-12 13:26:00 +0800
 categories: [SLAE32]
 tags: [slae32, assembly, x86, Bind TCP Shell]
-image: /assets/img/post/slae32/slae32-transparent.png
+image: /assets/img/post/slae32/slae32.png
 ---
 
 This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:
@@ -27,7 +27,13 @@ Bind TCP opens up a port on the victim system. If an attacker could exploit a vu
 ![image](/assets/img/post/slae32/assignment1/01.png)
 
 # Bind TCP Shell in C
-Before creating our Bind TCP Shell in shellcode, let's better understand the Bind TCP in a higher programming language. We will use `C`:
+Before creating our Bind TCP Shell in shellcode, we need to understand the Socket Programming. 
+
+> **NOTE**: Socket programming is a way of connecting two nodes on a network to communicate with each other. 
+
+
+
+let's better understand the Bind TCP in a higher programming language. We will use `C`:
 
 ```c++
 #include <sys/socket.h>
