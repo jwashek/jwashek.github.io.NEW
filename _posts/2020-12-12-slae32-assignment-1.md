@@ -433,7 +433,7 @@ root@kali:~/Documents/SLAE32/Exam/Assignement1# python compilerX86.py -f bind-tc
 
 # Final Touch
 
-Lastly, I create the following python script to change the port number as the user input and automatically create and compiled the `C` binary. 
+Lastly, I created the following python script to change the port number as the user input and automatically create and compile the `C` binary. 
 
 ```python
 import sys
