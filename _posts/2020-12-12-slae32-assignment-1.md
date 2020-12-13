@@ -31,9 +31,9 @@ Before creating our Bind TCP Shell in shellcode, we need to understand the Socke
 
 > **NOTE**: Socket programming is a way of connecting two nodes on a network to communicate with each other. 
 
+![image](/assets/img/post/slae32/assignment1/02.png)
 
-
-let's better understand the Bind TCP in a higher programming language. We will use `C`:
+To better understand the Bind TCP, let's create a Bind TCP Shell in a higher programming language. We will use `C`:
 
 ```c++
 #include <sys/socket.h>
