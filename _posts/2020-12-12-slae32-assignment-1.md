@@ -513,3 +513,10 @@ if __name__ == "__main__":
 
 ![image](/assets/img/post/slae32/assignment1/05.png)
 
+<b>This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:</b>
+
+<b>http://securitytube-training.com/online-courses/securitytube-linux-assembly-expert/</b>
+
+<b>Student ID: SLAE-1542</b>
+
+[SLAE32 Assignemt#1 Github](https://github.com/bigb0sss/SLAE32)
