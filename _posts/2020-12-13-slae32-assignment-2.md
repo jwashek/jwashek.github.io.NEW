@@ -13,7 +13,7 @@ image: /assets/img/post/slae32/slae32.png
 
 <b>Student ID: SLAE-1542</b>
 
-[SLAE32 Assignemt#1 Github](https://github.com/bigb0sss/SLAE32/tree/master/Assignment_%231)
+Github: https://github.com/bigb0sss/SLAE32/tree/master/Assignment_%231
 
 
 # Assignement #1 
