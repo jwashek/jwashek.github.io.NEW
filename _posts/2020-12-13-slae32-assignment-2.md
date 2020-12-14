@@ -83,5 +83,5 @@ For the Reverse TCP Shell, we need to following `syscalls`:
 1) Socket: Initializing the Socket connection
 2) Connect: Creating the Connect call to the given address
 3) Dup2: Manages `stdin`, `stdout` and `stderr` for the file descriptor. This is necessary for input and output redirection.
-4) Execve: Execute a command (/bin/sh to spawn a shell)
+4) Execve: Execute a command (`/bin/sh` to spawn a shell)
 
