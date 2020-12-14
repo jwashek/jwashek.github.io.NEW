@@ -95,12 +95,12 @@ The compiled binary can successfully open up a bind shell, and we can connect to
 # Shellcode 
 
 For our Bind TCP Shell shellcode, we need to use all those `syscalls`:
-* 1) Socket - Initiating the socket connection
-* 2) Bind - The `bind()` assigns the address specified by addr to the socket referred to by the file descriptor `sockfd`. 
-* 3) Listen - Listen for the incoming connection
-* 4) Accept - The  `accept()`  system call is used with connection-based socket types (SOCK_STREAM, SOCK_SEQPACKET)
-* 5) Dup2 - Manages `stdin`, `stdout` and `stderr` for the file descriptor. This is necessary for input and output redirection. 
-* 6) Execve - Execute a command (`/bin/sh` to spawn a shell)
+1) Socket - Initiating the socket connection
+2) Bind - The `bind()` assigns the address specified by addr to the socket referred to by the file descriptor `sockfd`. 
+3) Listen - Listen for the incoming connection
+4) Accept - The  `accept()`  system call is used with connection-based socket types (SOCK_STREAM, SOCK_SEQPACKET)
+5) Dup2 - Manages `stdin`, `stdout` and `stderr` for the file descriptor. This is necessary for input and output redirection. 
+6) Execve - Execute a command (`/bin/sh` to spawn a shell)
 
 ## Syscall + Function Calls
 
