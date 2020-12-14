@@ -296,7 +296,7 @@ int 0x80		; Execute SYS_EXECVE
 ```
 
 
-## Final Shellcode
+## Final Shellcode (bing-tcp-shell.nasm)
 
 Let's put everything togeter and test the shellcode.
 
@@ -404,7 +404,7 @@ int 0x80		; Execute SYS_EXECVE
 # Compile
 
 I created a simple compiler [compilerX86.py](https://github.com/bigb0sss/ASM_Learning/blob/master/compilerX86.py). Using this we can:
-* Compile `.nasm` to a binary
+* Compile `bind-tcp-shell.nasm` to a binary
 * Extract shellcode from the binary to create `shellcode.c`
 * Compile `shellcode.c` to a binary using `gcc`
 
