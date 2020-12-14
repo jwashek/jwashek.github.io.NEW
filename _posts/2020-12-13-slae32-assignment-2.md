@@ -20,13 +20,9 @@ image: /assets/img/post/slae32/slae32.png
 * Create a Shell_Reverse_TCP shellcode
 	- Reverse connects to configured IP and Port
 	- Execs shell on successful connection
-
 * IP and Port should be easily configurable
 
+# What is a Reverse Shell?
+Oppose to a Bind Shell, a Reverse Shell connects back to the attacker's computer upon a payload executed on the victim's system. This type of shell is more useful when the target organization has a strong Firewalls for inbound connection. The Reverse Shell can take the advantage of common outbound ports such as port 80, 443, 53 and etc. 
 
-# What is a Bind Shell?
-
-
-![image](/assets/img/post/slae32/assignment1/01.png)
-
-
+![image](/assets/img/post/slae32/assignment2/01.png)
