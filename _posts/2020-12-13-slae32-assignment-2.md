@@ -39,7 +39,7 @@ Similar to the Bind TCP Shell exercise, let's create a Reverseh TCP Shell in a h
 
 int main()
 {
-    int sockfd, acceptfd;
+    int sockfd;
 	int port = 9001;
 
 	// Address struct
@@ -80,7 +80,8 @@ The compiled reverse shell binary can successfully connect back to `127.0.0.1:90
 
 For the Reverse TCP Shell, we need to following `syscalls`:
 
-1) Socket
-2) Connect 
-3) Dup2
-4) Execve
+1) Socket: Initializing the Socket connection
+2) Connect: Creating the Connect call to the given address
+3) Dup2: Manages `stdin`, `stdout` and `stderr` for the file descriptor. This is necessary for input and output redirection.
+4) Execve: Execute a command (/bin/sh to spawn a shell)
+
