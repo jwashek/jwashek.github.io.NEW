@@ -35,7 +35,7 @@ Even though I knew what Egghunter was and how to use it, I wanted to understand 
 
 The following is the key take-away from the article:
 
-* Per the author, 8 byte egg is recommended since it can give enough uniquness that it can eaily selected without running any high risk of a collision. 
+* Per the author, 8 byte egg is recommended since it can give enough uniqueness that it can easily selected without running any high risk of a collision. 
 
 ## Linux Egghunter Implementation
 
