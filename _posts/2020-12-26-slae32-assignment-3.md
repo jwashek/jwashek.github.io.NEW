@@ -21,7 +21,7 @@ image: /assets/img/post/slae32/slae32.png
 * Should be configurable for different payloads
 
 # What is Egghunter?
-Personally, I have dealt with Egghunter when I was studying for the [OSCE course](https://www.offensive-security.com/offsec/retiring-ctp-intro-new-courses/) form Offensive Security. Egghunter is essentially a staged payload and is comprised with relatively short shellcode (around 32 bytes). In a situation where the first buffer space is limited, we can implement the Egghunter shellcode there, and this will search the process memory for the much bigger buffer space where we place the signature (aka "Egg") with our final reverse/bing shellcode.
+Personally, I have dealt with Egghunter when I was studying for the [OSCE course](https://www.offensive-security.com/offsec/retiring-ctp-intro-new-courses/) form Offensive Security. Egghunter is essentially a staged payload and is comprised with relatively short shellcode (around 30+ bytes). In a situation where the first buffer space is limited, we can implement the Egghunter shellcode there, and this will search the process memory for the much bigger buffer space where we place the signature (aka "Egg") with our final reverse/bind shellcode.
 
 The below image is a simplified version of how Egghunter works: 
 
@@ -33,7 +33,7 @@ The below image is a simplified version of how Egghunter works:
 
 Even though I knew what Egghunter was and how to use it, I wanted to understand it in greater detail. So I read Matt Miller's [Safely Searching Process Virtual Address Space](http://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) to learn more about Egghunter. 
 
-The following is the key take- aways from the article:
+The following is the key take-away from the article:
 
 * Per the author, 8 byte egg is recommended since it can give enough uniquness that it can eaily selected without running any high risk of a collision. 
 
