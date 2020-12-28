@@ -39,12 +39,17 @@ The following is the key take- aways from the article:
 
 * In Linux implementation, there are two main methods: 
     * 1) SIGSEGV handler to catch invalid memory address dereferences and prevent the program from crashing
-    * 2) Using OS' system call interface to validate process VMAs in kernel mode. 
+    * 2) Using OS system call interface to validate process VMAs in kernel mode. 
 
 * In Linux implementation, the SIGSEGV handler technique has a big drawback of a size issue. 
 
 * In Linux implementation, the fact that the system call will return the `EFAULT` error code when it encounters an invalid memory space is the exact type of information needed for Egghunter since it can traverse the process' VAS without crashing the program. 
 
+| Techniques | Pros | Cons |
+|:-|:-|:-|
+| Alfreds Futterkiste          | Maria Anders     | Germany |
+| Island Trading               | Helen Bennett    | UK      |
+| Magazzini Alimentari Riuniti | Giovanni Rovelli | Italy   |
 
 
 
