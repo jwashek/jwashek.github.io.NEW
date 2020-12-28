@@ -48,8 +48,8 @@ The following is the key take- aways from the article:
 | Techniques (Linux) | Size | Executable Egg | Pros | Cons |
 |:- |:- |:- |:- |
 | access | 39 bytes | Yes | Very robust | Bigger size, Eggs should be executable, limiting the range of unique eggs |
-| access (Improved)               | Helen Bennett    | UK      |
-| sigaction | Giovanni Rovelli | Italy   |
+| access (Improved) | 35 bytes | No | Very robust, non-executable eggs | Still a bit bigger size, Fails if Direction Flag (DF) is set | 
+| sigaction | 30 bytes | No | 
 
 
 
