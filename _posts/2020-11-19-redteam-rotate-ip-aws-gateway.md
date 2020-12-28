@@ -1,5 +1,5 @@
 ---
-title: Rotate Source IPs (Part 1) - AWS API Gateway
+title: Rotating Source IPs (Part 1) - AWS API Gateway
 author: bigb0ss
 date: 2020-11-19 23:36:00 +0800
 categories: [RedTeam, Infrastructure]
