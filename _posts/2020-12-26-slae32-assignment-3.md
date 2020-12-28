@@ -37,11 +37,13 @@ The following is the key take- aways from the article:
 
 * Per the author, 8 byte egg is recommended since it can give enough uniquness that it can eaily selected without running any high risk of a collision. 
 
-* In Linux implementation, there are two main methods: 1) SIGSEGV handler to catch invalid memory address dereferences and prevent the program from crashing; 2) Using OS' system call interface to validate process VMAs in kernel mode. 
+* In Linux implementation, there are two main methods: 
+    * 1) SIGSEGV handler to catch invalid memory address dereferences and prevent the program from crashing
+    * 2) Using OS' system call interface to validate process VMAs in kernel mode. 
 
 * In Linux implementation, the SIGSEGV handler technique has a big drawback of a size issue. 
 
-* In Linux implementation,
+* In Linux implementation, the fact that the system call will return the `EFAULT` error code when it encounters an invalid memory space is the exact type of information needed for Egghunter since it can traverse the process' VAS without crashing the program. 
 
 
 
