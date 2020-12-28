@@ -65,6 +65,8 @@ The following is the key take- aways from the article:
 | IsBadReadPtr | 37 bytes | No | Robust (API-based approach) | Use of a static VMA, Potential race condition, Fails if Direction Flag (DF) is set |
 | NtDisplayString | 32 bytes | No | Smallest, Fastest, Most robust | Static system call number, Fails if Direction Flag (DF) is set |
 
+# Egghunter Shellcode
+For demonstration purposes, I will be using the Linux implementation of `access()` syscall version to build the Egghunter payload. 
 
 
 <b>This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:</b>
