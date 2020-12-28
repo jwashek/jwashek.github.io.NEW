@@ -28,9 +28,16 @@ The below image is a simplified version of how Egghunter works:
 ![image](/assets/img/post/slae32/assignment3/01.png)
 
 # Egghunter In Depth
+
+![image](/assets/img/post/slae32/assignment3/02.png)
+
 Even though I knew what Egghunter was and how to use it, I wanted to understand it in greater detail. So I read Matt Miller's [Safely Searching Process Virtual Address Space](http://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) to learn more about Egghunter. 
 
+The following is the key take aways from the article:
 
+1) Per the author, 8 byte egg is recommended since it can give enough uniquness that it can eaily selected without running any high risk of a collision. 
+
+2) In Linux implementation, there are two main methods: a) SIGSEGV handler to catch invalid memory address dereferences and prevent the program from crashing; b) Using OS' system call interface to validate process VMAs in kernel mode. 
 
 
 
