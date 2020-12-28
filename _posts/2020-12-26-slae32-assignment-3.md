@@ -21,12 +21,14 @@ image: /assets/img/post/slae32/slae32.png
 * Should be configurable for different payloads
 
 # What is Egghunter?
-Personally, I have dealt with Egghunter when I was taking the [OSCE course](https://www.offensive-security.com/offsec/retiring-ctp-intro-new-courses/) form Offensive Security. The Egghunter is essentially a staged payload that can redirect the execution flow to specific location in memory. The Egghunter is comprised with relatively short shellcode (around 32 bytes), so if the first buffer space is limited, we can implement the Egghunter shellcode payload there, and this will searche the process memory for the much bigger buffer space where we place the signature (aka "Egg") with our final reverse/bing shellcode.
+Personally, I have dealt with Egghunter when I was studying for the [OSCE course](https://www.offensive-security.com/offsec/retiring-ctp-intro-new-courses/) form Offensive Security. Egghunter is essentially a staged payload and is comprised with relatively short shellcode (around 32 bytes). In a situation where the first buffer space is limited, we can implement the Egghunter shellcode there, and this will search the process memory for the much bigger buffer space where we place the signature (aka "Egg") with our final reverse/bing shellcode.
 
-The below image is very simplified version of how the Egghunter works: 
+The below image is a simplified version of how Egghunter works: 
 
 ![image](/assets/img/post/slae32/assignment3/01.png)
 
+# Egghunter In Depth
+Even though I knew what Egghunter was and how to use it, I wanted to understand it more in great details. So I read Matt Miller's [Safely Searching Process Virtual Address Space](http://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) to learn more about Egghunter. 
 
 
 
