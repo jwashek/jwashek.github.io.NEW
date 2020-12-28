@@ -37,6 +37,8 @@ The following is the key take- aways from the article:
 
 * Per the author, 8 byte egg is recommended since it can give enough uniquness that it can eaily selected without running any high risk of a collision. 
 
+## Linux Egghunter Implementation
+
 * In Linux implementation, there are two main methods: 
     * 1) SIGSEGV handler to catch invalid memory address dereferences and prevent the program from crashing
     * 2) Using OS system call interface to validate process VMAs in kernel mode. 
@@ -49,8 +51,19 @@ The following is the key take- aways from the article:
 |:- |:- |:- |:- |
 | access | 39 bytes | Yes | Very robust | Bigger size, Eggs should be executable, limiting the range of unique eggs |
 | access (Improved) | 35 bytes | No | Very robust, non-executable eggs | Still a bit bigger size, Fails if Direction Flag (DF) is set | 
-| sigaction | 30 bytes | No | 
+| sigaction | 30 bytes | No | Faster and smaller size | In certain scenarios, it may be not robust, Fails if Direction Flag (DF) is set |
 
+## Windows Egghunter Implementation
+
+* In Windows implementation, there are also two main methods:
+    * 1) SEH (Structure Exception Handler)
+    * 2) OS System call (IsBadReadPtr & NtDisplayString)
+
+| Techniques (Windows) | Size | Executable Egg | Pros | Cons |
+|:- |:- |:- |:- |
+| SEH | 60 bytes | No | Can run on any Windows version, Can search eggs bigger than 8 bytes | Bigger size, Fails if Direction Flag (DF) is set |
+| IsBadReadPtr | 37 bytes | No | Robust (API-based approach) | Use of a static VMA, Potential race condition, Fails if Direction Flag (DF) is set |
+| NtDisplayString | 32 bytes | No | Smallest, Fastest, Most robust | Static system call number, Fails if Direction Flag (DF) is set |
 
 
 
