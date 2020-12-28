@@ -45,11 +45,11 @@ The following is the key take- aways from the article:
 
 * In Linux implementation, the fact that the system call will return the `EFAULT` error code when it encounters an invalid memory space is the exact type of information needed for Egghunter since it can traverse the process' VAS without crashing the program. 
 
-| Techniques | Pros | Cons |
-|:-|:-|:-|
-| Alfreds Futterkiste          | Maria Anders     | Germany |
-| Island Trading               | Helen Bennett    | UK      |
-| Magazzini Alimentari Riuniti | Giovanni Rovelli | Italy   |
+| Techniques | Size | Pros | Cons |
+|:- |:- |:- |:- |
+| access          | Maria Anders     | Germany |
+| access (Improved)               | Helen Bennett    | UK      |
+| sigaction | Giovanni Rovelli | Italy   |
 
 
 
