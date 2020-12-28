@@ -28,7 +28,7 @@ The below image is a simplified version of how Egghunter works:
 ![image](/assets/img/post/slae32/assignment3/01.png)
 
 # Egghunter In Depth
-Even though I knew what Egghunter was and how to use it, I wanted to understand it more in great details. So I read Matt Miller's [Safely Searching Process Virtual Address Space](http://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) to learn more about Egghunter. 
+Even though I knew what Egghunter was and how to use it, I wanted to understand it in greater detail. So I read Matt Miller's [Safely Searching Process Virtual Address Space](http://www.hick.org/code/skape/papers/egghunt-shellcode.pdf) to learn more about Egghunter. 
 
 
 
