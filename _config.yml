@@ -3,9 +3,9 @@
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 #--------------------------
 
-title: bigb0ss                          # the main title
+title: InfoShek                          # the main title
 
-tagline: OSCE | OSCP | Security Blog # it will display as the sub-title
+tagline: Penetration Testing, Bug Bounty Hunting, and CTF walkthroughs. # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   A minimal, portfolio, sidebar,
@@ -13,28 +13,28 @@ description: >-                        # used by seo meta and the atom feed
   and focuses on text presentation.
 
 # Replace with the website url, e.g. 'https://username.github.io'
-url: 'https://bigb0sss.github.io'
+url: 'https://jwashek.github.io'
 
-author: bigb0ss                  
+author: jwashek                  
 avatar: /assets/img/bigb0ss/bigb0ss.png
 
 linkedin:
-  username: danielsmin
+  username: justin-washek-979b4b91
 
 github:
-  username: bigb0sss             
+  username: jwashek             
 
-twitter:
-  username: bigb0ss___           
+#twitter:
+  #username: jwashek           
 
 social:
-  name: bigb0ss                  # it will shows as the copyright owner in Footer
-  email: example@doamin.com             # change to your email address
+  name: jwashek                  # it will shows as the copyright owner in Footer
+  email: example@domain.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://www.linkedin.com/in/danielsmin
-    - https://twitter.com/bigb0ss___      # change to your twitter homepage
-    - https://github.com/bigb0sss       # change to your github homepage
+    - https://www.linkedin.com/in/justin-washek-979b4b91
+   # - https://twitter.com/bigb0ss___      # change to your twitter homepage
+    - https://github.com/jwashek       # change to your github homepage
     
 
 google_site_verification: google_meta_tag_verification # change to your verification string
@@ -57,9 +57,9 @@ google_analytics:
     proxy_endpoint: ''
     cache: false  # pv data local cache, good for the users from GFW area.
 
-disqus:
-  comments: true  # boolean type, the global switch for posts comments.
-  shortname: 'bigb0ss-blog'    # Fill with your Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
+#disqus:
+#  comments: true  # boolean type, the global switch for posts comments.
+#  shortname: 'bigb0ss-blog'    # Fill with your Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
 
 
 # Prefer color scheme setting, available values:
@@ -71,7 +71,7 @@ disqus:
 #
 #     dark   - Use the dark color scheme
 #
-theme_mode: dark
+theme_mode: dual
 
 # boolean type, global switch for ToC in posts.
 toc: true
@@ -132,17 +132,17 @@ defaults:
           url: /tabs/tags/
   -
     scope:
-      path: blogs #categories
+      path: categories #categories
     values:
-      tab_active: Blogs #Categories
-      location: Blog #Category
+      tab_active: Categories #Categories
+      location: Category #Category
       breadcrumb:
         -
           label: Home
           url: /
         -
-          label: Blogs #Categories
-          url: /tabs/blogs #categories/
+          label: Categories #Categories
+          url: /tabs/categories #categories/
   -
     scope:
       path: tabs
