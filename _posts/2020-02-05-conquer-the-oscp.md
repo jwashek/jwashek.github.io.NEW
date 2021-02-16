@@ -2,7 +2,7 @@
 title: "How-to: Conquer the OSCP"
 author: jwashek
 date: 2020-02-05 20:25:00 +0800
-categories: [How-To's, Cert Conquering]
+categories: [Certifications, How-To]
 tags: [oscp, tryharder, enumerate]
 image: /assets/img/post/oscp/oscp.png
 ---
