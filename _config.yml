@@ -153,7 +153,8 @@ defaults:
         -
           label: Home
           url: /
-
+          
+# Here is a test comment.
 
 sass:
   sass_dir: /assets/css
