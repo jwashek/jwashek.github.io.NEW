@@ -4,19 +4,5 @@ title: About
 # The About page
 ---
 
-Welcome to my blog! My name is bigb0ss. This is my new blog platform (at least I am getting it ready). My previous blog posts can be found at below Medium: 
-
-Meidum Blog: https://bigb0ss.medium.com/
-
-I am an offensive security professional. Feel free to connect with me on Linkedin. 
-
-CVE:
-* CVE-2020-15931 [Netwrix Account Lockout Examiner 4.1](https://github.com/optiv/CVE-2020-15931)
-
-Certifications:
-* OSCE
-* OSCP
-* CREST-CRT
-* CREST-CPSA
-* GPEN
-* CISA
+My name is Justin and I've been living my dream job as a Penetration Tester since June 2020 and loving every minute of the journey so far! I am currently <a href="https://www.youracclaim.com/badges/f7f54f7e-b6fa-42c7-997d-2072a42aaa04/public_url">OSCP</a> and <a href="https://www.youracclaim.com/badges/16926d2c-c2c2-4bf6-9fee-4f72b33b3aef/public_url">Pentest+</a> certified and pursuing just about every penetration testing course/certification that I can get my hands on.<br><br>
+While I'm not hacking for my role, I participate in Bug Bounty Hunting and CTFs to keep my skills sharp and aligned with current industry trends and technologies.<br><br> My hope for this blog is to post my penetration testing experiences, bugs found through Bug Bounty Hunting, and CTF writeups -- all while trying to share as much knowlege as possible to help the community (and myself) to git gud.</h3>
